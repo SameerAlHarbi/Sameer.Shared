@@ -3,7 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28010.2036
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sameer.Shared", "Sameer.Shared\Sameer.Shared.csproj", "{FB14608F-35B4-4699-8FA0-853A84E40C64}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sameer.Shared", "Sameer.Shared\Sameer.Shared.csproj", "{FB14608F-35B4-4699-8FA0-853A84E40C64}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sameer.Shared.Helpers", "Sameer.Shared.Helpers\Sameer.Shared.Helpers.csproj", "{95B2479B-5ECB-47BF-80EE-18679A042AAF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sameer.Shared.Test", "Sameer.Shared.Test\Sameer.Shared.Test.csproj", "{DF20C56D-742E-470D-8262-DCBF8D138662}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +19,14 @@ Global
 		{FB14608F-35B4-4699-8FA0-853A84E40C64}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FB14608F-35B4-4699-8FA0-853A84E40C64}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FB14608F-35B4-4699-8FA0-853A84E40C64}.Release|Any CPU.Build.0 = Release|Any CPU
+		{95B2479B-5ECB-47BF-80EE-18679A042AAF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{95B2479B-5ECB-47BF-80EE-18679A042AAF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{95B2479B-5ECB-47BF-80EE-18679A042AAF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{95B2479B-5ECB-47BF-80EE-18679A042AAF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DF20C56D-742E-470D-8262-DCBF8D138662}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DF20C56D-742E-470D-8262-DCBF8D138662}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DF20C56D-742E-470D-8262-DCBF8D138662}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DF20C56D-742E-470D-8262-DCBF8D138662}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
