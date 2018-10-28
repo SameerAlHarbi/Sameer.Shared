@@ -73,8 +73,6 @@ namespace Sameer.Shared.Helpers
 
         public static DateTime ConvertToGregorianDate([Range(1300,1500,ErrorMessage = "Invalid hijri year !")]int hijriYear, [Range(1, 12, ErrorMessage = "Invalid hijri month !")]int hijriMonth, [Range(1,30, ErrorMessage = "Invalid hijri day !")]int hijriDay)
         {
-            
-
             CultureInfo arCul = new CultureInfo("ar-SA");
             arCul.DateTimeFormat.Calendar = new UmAlQuraCalendar();
             string dateString = string.Format("{0:0000}/{1:00}/{2:00}", hijriYear, hijriMonth, hijriDay);
