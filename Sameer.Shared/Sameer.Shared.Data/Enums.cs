@@ -1,4 +1,4 @@
-﻿namespace Sameer.Shared
+﻿namespace Sameer.Shared.Data
 {
     public enum RepositoryActionStatus
     {

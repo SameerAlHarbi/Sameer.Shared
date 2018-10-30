@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Globalization;
 
-namespace Sameer.Shared.Helpers
+namespace Sameer.Shared
 {
     public static class DateHelpers
     {
@@ -153,5 +153,6 @@ namespace Sameer.Shared.Helpers
                 date.DayOfWeek,
                 date.GetDayName(true));
         }
+
     }
 }

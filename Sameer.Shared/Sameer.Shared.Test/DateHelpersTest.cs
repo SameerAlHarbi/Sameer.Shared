@@ -1,6 +1,6 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Sameer.Shared.Helpers;
 using System;
+using Sameer.Shared;
 
 namespace Sameer.Shared.Test
 {

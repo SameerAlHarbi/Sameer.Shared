@@ -14,6 +14,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Sameer.Shared.Helpers\Sameer.Shared.Helpers.csproj" />
+    <ProjectReference Include="..\Sameer.Shared\Sameer.Shared.csproj" />
   </ItemGroup>
 
 </Project>

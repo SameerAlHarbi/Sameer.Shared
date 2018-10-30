@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Sameer.Shared
+namespace Sameer.Shared.Data
 {
     [AttributeUsage(AttributeTargets.Property)]
     public class UniqueAttribute : Attribute

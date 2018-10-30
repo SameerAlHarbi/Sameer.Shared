@@ -1,22 +1,22 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <Authors>Sameer Al Harbi</Authors>
     <Company>Saudi Geological Survey</Company>
-    <Description>Contains shared dll's and managers for comman .net programming and operations.</Description>
-    <PackageTags>.net statndard,date,hijri,hijry,helper,helpers,calculations</PackageTags>
     <Copyright>Sameer Al Harbi 2018</Copyright>
+    <Description>Contains shared dll's and managers for comman .net programming and data operations.</Description>
     <PackageProjectUrl>https://github.com/SameerAlHarbi/Sameer.Shared</PackageProjectUrl>
     <RepositoryUrl>https://github.com/SameerAlHarbi/Sameer.Shared.git</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
+    <PackageTags>.net statndard,Data,entityframework,core,reopsitory</PackageTags>
     <NeutralLanguage>en-US</NeutralLanguage>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>1.1.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="System.ComponentModel.Annotations" Version="4.5.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.2.0-preview3-35497" />
+    <PackageReference Include="Sameer.Shared" Version="1.1.0" />
   </ItemGroup>
 
 </Project>

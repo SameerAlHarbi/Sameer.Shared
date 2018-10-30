@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Sameer.Shared
+namespace Sameer.Shared.Data
 {
     public class RepositoryActionResult<T> where T : class
     {

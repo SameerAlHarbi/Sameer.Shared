@@ -1,5 +1,4 @@
 ﻿using System;
-using Sameer.Shared.Helpers;
 
 namespace Sameer.Shared.ConsoleTest
 {
@@ -7,9 +6,7 @@ namespace Sameer.Shared.ConsoleTest
     {
         static void Main(string[] args)
         {
-            DateTime dt = DateTime.Today;
-            Console.WriteLine(dt.ConvertToString(true,true,false));
-            Console.ReadKey();
+            Console.WriteLine("Hello World!");
         }
     }
 }

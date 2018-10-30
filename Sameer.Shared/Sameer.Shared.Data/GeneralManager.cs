@@ -6,7 +6,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 
-namespace Sameer.Shared
+namespace Sameer.Shared.Data
 {
     public class GeneralManager<T> : IDisposable where T : class, ISameerObject, new()
     {

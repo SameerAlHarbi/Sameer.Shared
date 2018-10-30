@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Sameer.Shared.Helpers" Version="0.1.0" />
+    <PackageReference Include="Sameer.Shared" Version="1.1.0" />
   </ItemGroup>
 
 </Project>

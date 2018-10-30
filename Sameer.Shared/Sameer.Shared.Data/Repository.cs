@@ -7,7 +7,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Linq.Expressions;
 
-namespace Sameer.Shared
+namespace Sameer.Shared.Data
 {
     public class Repository<C> : IRepository 
         where C : DbContext
