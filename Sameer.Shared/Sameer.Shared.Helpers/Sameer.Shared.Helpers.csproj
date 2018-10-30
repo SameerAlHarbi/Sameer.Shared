@@ -1,11 +1,23 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+
+    <PackageId>Sameer.Shared.Helpers</PackageId>
+    <Version>0.1.0</Version>
+    <Authors>Sameer Al Harbi</Authors>
+    <Company>Saudi Geological Survey</Company>
+    <PackageTags>.net statndard,date,hijri,hijry,helper,helpers,calculations</PackageTags>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Description>Contains shared dll's and helpers for common .net tasks .</Description>
+    <Copyright>Sameer Al Harbi 2018</Copyright>
+    <PackageProjectUrl>https://github.com/SameerAlHarbi/Sameer.Shared</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/SameerAlHarbi/Sameer.Shared.git</RepositoryUrl>
+    <RepositoryType>Git</RepositoryType>
+    <NeutralLanguage>en-US</NeutralLanguage>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="System.ComponentModel.Annotations" Version="4.5.0" />
   </ItemGroup>
-
 </Project>

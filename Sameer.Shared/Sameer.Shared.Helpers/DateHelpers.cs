@@ -134,9 +134,24 @@ namespace Sameer.Shared.Helpers
             return int.Parse(date.ToString("dd", culture));
         }
 
-        public static (int year, int month ,int day) GetInfo(this DateTime date, bool hijri = false)
+        public static (int year, int month ,int day,DayOfWeek dayOfWeek,string arabicDayName) GetInfo(this DateTime date, bool hijri = false)
         {
+            CultureInfo culture = new CultureInfo(hijri ? "ar-SA" : "en-US");
 
+            if (hijri)
+            {
+                culture.DateTimeFormat.Calendar = new UmAlQuraCalendar();
+            }
+            else
+            {
+                culture.DateTimeFormat.Calendar = new GregorianCalendar(GregorianCalendarTypes.USEnglish);
+            }
+
+            return (int.Parse(date.ToString("yyyy", culture)),
+                int.Parse(date.ToString("MM", culture)),
+                int.Parse(date.ToString("dd", culture)),
+                date.DayOfWeek,
+                date.GetDayName(true));
         }
     }
 }

@@ -1,7 +1,17 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <Authors>Sameer Al Harbi</Authors>
+    <Company>Saudi Geological Survey</Company>
+    <Description>Contains shared dll's and managers for comman data operations.</Description>
+    <PackageTags>sgs,core,repository,data</PackageTags>
+    <Copyright>Sameer Al Harbi 2018</Copyright>
+    <PackageProjectUrl>https://github.com/SameerAlHarbi/Sameer.Shared</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/SameerAlHarbi/Sameer.Shared.git</RepositoryUrl>
+    <RepositoryType>Git</RepositoryType>
+    <NeutralLanguage>en-US</NeutralLanguage>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <ItemGroup>
