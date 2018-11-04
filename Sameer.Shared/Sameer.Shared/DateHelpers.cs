@@ -6,32 +6,24 @@ namespace Sameer.Shared
     public static class DateHelpers
     {
 
-        public static string GetDayName(this DateTime date, bool showDayNameInArabic = false)
+        public static string GetDayName(this DayOfWeek dayOfWeek, bool arabic = false)
         {
-            if (!showDayNameInArabic)
-            {
-                return date.DayOfWeek.ToString();
-            }
-
-            switch (date.DayOfWeek)
-            {
-                case DayOfWeek.Sunday:
-                    return "الأحد";
-                case DayOfWeek.Monday:
-                    return "الإثنين";
-                case DayOfWeek.Tuesday:
-                    return "الثلاثاء";
-                case DayOfWeek.Wednesday:
-                    return "الأربعاء";
-                case DayOfWeek.Thursday:
-                    return "الخميس";
-                case DayOfWeek.Friday:
-                    return "الجمعة";
-                default:
-                    return "السبت";
-            }
+            return CultureInfo
+                .GetCultureInfo(arabic ? "ar-SA" : "en-US")
+                .DateTimeFormat.GetDayName(dayOfWeek);
         }
 
+        public static string GetDayName(this DateTime date, bool arabic = false)
+        {
+            return date.DayOfWeek.GetDayName(arabic);
+        }
+
+        public static string GetMonthName(string monthName,bool arabic=false)
+        {
+            string monthName = "";
+
+            return 
+        }
         public static string ConvertToString(this DateTime date, bool hijri = false
             , bool showDayName = false, bool showDayNameInArabic = false
             , string format = "yyyy/MM/dd")
@@ -134,7 +126,52 @@ namespace Sameer.Shared
             return int.Parse(date.ToString("dd", culture));
         }
 
-        public static (int year, int month ,int day,DayOfWeek dayOfWeek,string arabicDayName) GetInfo(this DateTime date, bool hijri = false)
+        //public static string TranslateMonthName(string monthName)
+        //{
+        //    switch (monthName)
+        //    {
+        //        case "Ju"
+        //    }
+        //}
+
+        //public static string GetMonthName(int monthNumber, bool hijri = false, bool arabicName = false)
+        //{
+        //    CultureInfo culture = new CultureInfo(hijri ? "ar-SA" : "en-US");
+
+        //    if (hijri)
+        //    {
+        //        culture.DateTimeFormat.Calendar = new UmAlQuraCalendar();
+        //    }
+        //    else
+        //    {
+        //        culture.DateTimeFormat.Calendar = new GregorianCalendar(GregorianCalendarTypes.USEnglish);
+        //    }
+
+        //    string results = culture.DateTimeFormat.GetMonthName(monthNumber);
+
+        //    switch(results)
+        //    {
+
+        //    }
+        //}
+
+        public static string GetMonthName(this DateTime date,bool hijri=false,bool arabicName=false)
+        {
+            CultureInfo culture = new CultureInfo(hijri ? "ar-SA" : "en-US");
+
+            if (hijri)
+            {
+                culture.DateTimeFormat.Calendar = new UmAlQuraCalendar();
+            }
+            else
+            {
+                culture.DateTimeFormat.Calendar = new GregorianCalendar(GregorianCalendarTypes.USEnglish);
+            }
+
+            return date.ToString("MMMM", culture);
+        }
+
+        public static (int year, int month ,int day,DayOfWeek dayOfWeek,string arabicDayName, string monthName) GetInfo(this DateTime date, bool hijri = false)
         {
             CultureInfo culture = new CultureInfo(hijri ? "ar-SA" : "en-US");
 
@@ -151,8 +188,10 @@ namespace Sameer.Shared
                 int.Parse(date.ToString("MM", culture)),
                 int.Parse(date.ToString("dd", culture)),
                 date.DayOfWeek,
-                date.GetDayName(true));
+                date.GetDayName(true),
+                date.ToString("MMMM", culture));
         }
+
 
     }
 }

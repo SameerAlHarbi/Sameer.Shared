@@ -43,5 +43,23 @@ namespace Sameer.Shared.Test
                 && result.dayOfWeek == DayOfWeek.Tuesday
                 && result.arabicDayName== "«·À·«À«¡");
         }
+
+        [TestMethod]
+        public void TestMonthName_GregorianEnglish()
+        {
+            DateTime dt = new DateTime(2018, 10, 30);
+            var result = dt.GetMonthName(false);
+
+            Assert.IsTrue(result == "October");
+        }
+
+        [TestMethod]
+        public void TestMonthName_HijriEnglish()
+        {
+            DateTime dt = new DateTime(2018, 10, 30);
+            var result = dt.GetMonthName(true);
+
+            Assert.IsTrue(result == "October");
+        }
     }
 }
