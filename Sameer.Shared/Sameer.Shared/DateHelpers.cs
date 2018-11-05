@@ -18,12 +18,6 @@ namespace Sameer.Shared
             return date.DayOfWeek.GetDayName(arabic);
         }
 
-        public static string GetMonthName(string monthName,bool arabic=false)
-        {
-            string monthName = "";
-
-            return 
-        }
         public static string ConvertToString(this DateTime date, bool hijri = false
             , bool showDayName = false, bool showDayNameInArabic = false
             , string format = "yyyy/MM/dd")
@@ -188,7 +182,7 @@ namespace Sameer.Shared
                 int.Parse(date.ToString("MM", culture)),
                 int.Parse(date.ToString("dd", culture)),
                 date.DayOfWeek,
-                date.GetDayName(true),
+                date.DayOfWeek.GetDayName(true),
                 date.ToString("MMMM", culture));
         }
 
