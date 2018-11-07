@@ -149,7 +149,7 @@ namespace Sameer.Shared
         //    }
         //}
 
-        public static string GetMonthName(this DateTime date,bool hijri=false,bool arabicName=false)
+        public static string GetMonthName(this DateTime date,bool hijri=false)
         {
             CultureInfo culture = new CultureInfo(hijri ? "ar-SA" : "en-US");
 
