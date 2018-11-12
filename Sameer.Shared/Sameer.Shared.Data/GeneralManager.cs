@@ -164,7 +164,6 @@ namespace Sameer.Shared.Data
             }
             catch (Exception ex)
             {
-
                 throw ex;
             }
         }
@@ -545,14 +544,14 @@ namespace Sameer.Shared.Data
         {
             try
             {
-                ICollection<ValidationResult> itemValidationResult = ValidateNewItem(newItem);
+                ICollection<ValidationResult> itemValidationResult = await ValidateNewItemAsync(newItem);
 
                 if (itemValidationResult.Any())
                 {
                     throw new ValidationException(itemValidationResult.First(), validatingAttribute: null, value: newItem);
                 }
 
-                return this.DirectInsertNew(newItem, checkConcurrency, mergeValues, validateBeforeSave);
+                return await this.DirectInsertNewAsync(newItem, checkConcurrency, mergeValues, validateBeforeSave);
 
             }
             catch (ValidationException)
@@ -585,7 +584,7 @@ namespace Sameer.Shared.Data
         {
             try
             {
-                return repository.Insert(newItem, checkConcurrency, mergeValues, validateBeforeSave);
+                return await repository.InsertAsync(newItem, checkConcurrency, mergeValues, validateBeforeSave);
             }
             catch (ValidationException ex)
             {
@@ -647,11 +646,50 @@ namespace Sameer.Shared.Data
             }
         }
 
+        public async Task<RepositoryActionResult<T>> UpdateItemAsync(T currentItem, bool checkConcurrency = true, bool mergeValues = false, bool validateBeforeSave = true)
+        {
+            try
+            {
+                ICollection<ValidationResult> itemValidationResult = await ValidateUpdateItemAsync(currentItem);
+
+                if (itemValidationResult.Any())
+                {
+                    throw new ValidationException(itemValidationResult.First(), validatingAttribute: null, value: currentItem);
+                }
+
+                return await this.DirectUpdateItemAsync(currentItem, checkConcurrency, mergeValues, validateBeforeSave);
+            }
+            catch (ValidationException)
+            {
+                throw;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
         protected RepositoryActionResult<T> DirectUpdateItem(T newItem, bool checkConcurrency = true, bool mergeValues = false, bool validateBeforeSave = true)
         {
             try
             {
                 return repository.Update(newItem, checkConcurrency, mergeValues, validateBeforeSave);
+            }
+            catch (ValidationException)
+            {
+                throw;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        protected async Task<RepositoryActionResult<T>> DirectUpdateItemAsync(T newItem, bool checkConcurrency = true, bool mergeValues = false, bool validateBeforeSave = true)
+        {
+            try
+            {
+                return await repository.UpdateAsync(newItem, checkConcurrency, mergeValues, validateBeforeSave);
             }
             catch (ValidationException)
             {
@@ -682,6 +720,36 @@ namespace Sameer.Shared.Data
                 }
 
                 return this.DirectDeleteItem(itemId);
+            }
+            catch (ValidationException)
+            {
+                throw;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public async Task<RepositoryActionResult<T>> DeleteItemAsync(int itemId)
+        {
+            try
+            {
+                T itemToDelete = await this.GetByIdAsync(itemId);
+
+                if (itemToDelete == null)
+                {
+                    return new RepositoryActionResult<T>(entity: null, status: RepositoryActionStatus.NotFound);
+                }
+
+                ICollection<ValidationResult> itemValidationResult = await ValidateDeleteItemAsync(itemToDelete);
+
+                if (itemValidationResult.Any())
+                {
+                    throw new ValidationException(itemValidationResult.First(), validatingAttribute: null, value: null);
+                }
+
+                return await this.DirectDeleteItemAsync(itemId);
             }
             catch (ValidationException)
             {
@@ -728,11 +796,62 @@ namespace Sameer.Shared.Data
             }
         }
 
+        public async Task<IEnumerable<RepositoryActionResult<T>>> DeleteItemsAsync(int[] itemsIds)
+        {
+            try
+            {
+                List<T> itemsToDelete = await this.GetAll(itm => itemsIds.Contains(itm.Id)).AsNoTracking().ToListAsync();
+
+                if (itemsToDelete == null || itemsToDelete.Count < 1)
+                {
+                    return new List<RepositoryActionResult<T>> { new RepositoryActionResult<T>(entity: null, status: RepositoryActionStatus.NotFound) };
+                }
+
+                var itemsValidationResult = new List<ValidationResult>();
+
+                foreach (var item in itemsToDelete)
+                {
+                    itemsValidationResult.AddRange(ValidateDeleteItem(item));
+                }
+
+                if (itemsValidationResult.Any())
+                {
+                    throw new ValidationException(itemsValidationResult.First(), validatingAttribute: null, value: null);
+                }
+
+                return await this.repository.DeleteAllAsync<T>(itemsIds);
+            }
+            catch (ValidationException)
+            {
+                throw;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
         protected virtual RepositoryActionResult<T> DirectDeleteItem(int itemId)
         {
             try
             {
                 return repository.Delete<T>(itemId);
+            }
+            catch (ValidationException)
+            {
+                throw;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        protected virtual async Task<RepositoryActionResult<T>> DirectDeleteItemAsync(int itemId)
+        {
+            try
+            {
+                return await repository.DeleteAsync<T>(itemId);
             }
             catch (ValidationException)
             {

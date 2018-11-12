@@ -86,7 +86,8 @@ namespace Sameer.Shared.Data
             }
         }
 
-        public async Task<TEntity> GetSingleItemAsync<TEntity>(Expression<Func<TEntity, bool>> predicate, params Expression<Func<TEntity, object>>[] includeProperties) where TEntity : class
+        public async Task<TEntity> GetSingleItemAsync<TEntity>(Expression<Func<TEntity, bool>> predicate
+            , params Expression<Func<TEntity, object>>[] includeProperties) where TEntity : class
         {
             try
             {
