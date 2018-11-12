@@ -1,10 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore.Query;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using System.Threading.Tasks;
 
 namespace Sameer.Shared.Data
 {
@@ -23,6 +25,32 @@ namespace Sameer.Shared.Data
             try
             {
                 return this.repository.GetAll(predicate, includeProperties);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public async Task<List<T>> GetAllListAsync(Expression<Func<T, bool>> predicate = null
+            , params Expression<Func<T, object>>[] includeProperties)
+        {
+            try
+            {
+                return await this.repository.GetAll(predicate, includeProperties).ToListAsync();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public async Task<List<T>> GetAllAsNoTrackingListAsync(Expression<Func<T, bool>> predicate = null
+            , params Expression<Func<T, object>>[] includeProperties)
+        {
+            try
+            {
+                return await this.repository.GetAll(predicate, includeProperties).AsNoTracking().ToListAsync();
             }
             catch (Exception)
             {
@@ -86,6 +114,19 @@ namespace Sameer.Shared.Data
             }
         }
 
+        public async Task<T> GetByIdAsync(int itemId
+            , params Expression<Func<T, object>>[] includeProperties)
+        {
+            try
+            {
+                return await GetSingleItemAsync(t => t.Id == itemId, includeProperties);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
         public IQueryable<T> GetAllByIds(int[] itemsIds
             , params Expression<Func<T, object>>[] includeProperties)
         {
@@ -100,12 +141,53 @@ namespace Sameer.Shared.Data
             }
         }
 
+        public async Task<List<T>> GetAllByIdsListAsync(int[] itemsIds
+            , params Expression<Func<T, object>>[] includeProperties)
+        {
+            try
+            {
+                return await this.GetAllListAsync(r => itemsIds.Contains(r.Id), includeProperties);
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+        }
+
+        public async Task<List<T>> GetAllByIdsAsNoTrackingListAsync(int[] itemsIds
+            , params Expression<Func<T, object>>[] includeProperties)
+        {
+            try
+            {
+                return await this.GetAllAsNoTrackingListAsync(r => itemsIds.Contains(r.Id), includeProperties);
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+        }
+
         public T GetSingleItem(Expression<Func<T, bool>> predicate = null
             , params Expression<Func<T, object>>[] includeProperties)
         {
             try
             {
                 return GetAll(predicate, includeProperties).FirstOrDefault();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public async Task<T> GetSingleItemAsync(Expression<Func<T, bool>> predicate = null
+           , params Expression<Func<T, object>>[] includeProperties)
+        {
+            try
+            {
+                return await GetAll(predicate, includeProperties).FirstOrDefaultAsync();
             }
             catch (Exception)
             {
@@ -134,9 +216,19 @@ namespace Sameer.Shared.Data
             return new List<ValidationResult>();
         }
 
+        protected virtual async Task<ICollection<ValidationResult>> CustomNewRulesValidateAsync(T newItem)
+        {
+            return await Task.FromResult(new List<ValidationResult>());
+        }
+
         protected virtual ICollection<ValidationResult> CustomUpdateRulesValidate(T newItem)
         {
             return new List<ValidationResult>();
+        }
+
+        protected virtual async Task<ICollection<ValidationResult>> CustomUpdateRulesValidateAsync(T newItem)
+        {
+            return await Task.FromResult(new List<ValidationResult>());
         }
 
         protected virtual ICollection<ValidationResult> CustomDeleteRulesValidate(T itemToDelete)
@@ -144,11 +236,24 @@ namespace Sameer.Shared.Data
             return new List<ValidationResult>();
         }
 
+        protected virtual async Task<ICollection<ValidationResult>> CustomDeleteRulesValidateAsync(T itemToDelete)
+        {
+            return await Task.FromResult(new List<ValidationResult>());
+        }
+
         protected ICollection<ValidationResult> ValidateNewItem(T newItem)
         {
             List<ValidationResult> itemValidationResult = ValidateItemInformation(newItem).ToList();
             itemValidationResult.AddRange(ValidateUniqueItem(newItem));
             itemValidationResult.AddRange(CustomNewRulesValidate(newItem));
+            return itemValidationResult;
+        }
+
+        protected async Task<ICollection<ValidationResult>> ValidateNewItemAsync(T newItem)
+        {
+            List<ValidationResult> itemValidationResult = ValidateItemInformation(newItem).ToList();
+            itemValidationResult.AddRange(await ValidateUniqueItemAsync(newItem));
+            itemValidationResult.AddRange(await CustomNewRulesValidateAsync(newItem));
             return itemValidationResult;
         }
 
@@ -160,9 +265,22 @@ namespace Sameer.Shared.Data
             return itemValidationResult;
         }
 
+        protected async Task<ICollection<ValidationResult>> ValidateUpdateItemAsync(T currentItem)
+        {
+            List<ValidationResult> itemValidationResult = ValidateItemInformation(currentItem).ToList();
+            itemValidationResult.AddRange(await ValidateUniqueItemAsync(currentItem));
+            itemValidationResult.AddRange(await CustomUpdateRulesValidateAsync(currentItem));
+            return itemValidationResult;
+        }
+
         public virtual ICollection<ValidationResult> ValidateDeleteItem(T itemToDelete)
         {
             return CustomDeleteRulesValidate(itemToDelete);
+        }
+
+        public virtual async Task<ICollection<ValidationResult>> ValidateDeleteItemAsync(T itemToDelete)
+        {
+            return await CustomDeleteRulesValidateAsync(itemToDelete);
         }
 
         protected ICollection<ValidationResult> ValidateUniqueItem(T newItem)
@@ -282,6 +400,123 @@ namespace Sameer.Shared.Data
             return vResults;
         }
 
+        protected async Task<ICollection<ValidationResult>> ValidateUniqueItemAsync(T newItem)
+        {
+            var vResults = new List<ValidationResult>();
+
+            PropertyInfo[] properties = newItem.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance);
+
+            var valProps = from prp in properties
+                           where prp.GetCustomAttributes(typeof(UniqueAttribute), inherit: true).Count() > 0
+                           select new
+                           {
+                               property = prp,
+                               uniqAttr = prp.GetCustomAttributes(typeof(UniqueAttribute), inherit: true)
+                           };
+
+            if (valProps.Any())
+            {
+                var expressionsList = new List<Expression>();
+                ParameterExpression e = Expression.Parameter(typeof(T), name: "e");
+
+                foreach (var prp in valProps)
+                {
+                    Expression left = Expression.MakeMemberAccess(e, prp.property);
+                    Expression right;
+
+                    object propertyValue = newItem.GetType().GetProperty(prp.property.Name).GetValue(newItem, index: null);
+                    if (propertyValue == null)
+                    {
+                        right = Expression.Constant(value: null);
+                    }
+                    else
+                    {
+                        right = Expression.Constant(propertyValue, propertyValue.GetType());
+                    }
+
+                    BinaryExpression resultExpression = Expression.Equal(left, right);
+
+                    var unqAttr = prp.uniqAttr.First() as UniqueAttribute;
+                    foreach (var parentName in unqAttr.ParentsPropertiesNames)
+                    {
+                        left = Expression.MakeMemberAccess(e, newItem.GetType().GetProperty(parentName));
+                        propertyValue = newItem.GetType().GetProperty(parentName).GetValue(newItem, index: null);
+
+                        if (propertyValue == null)
+                        {
+                            right = Expression.Constant(value: null);
+                        }
+                        else
+                        {
+                            right = Expression.Constant(propertyValue, newItem.GetType().GetProperty(parentName).PropertyType);
+                        }
+
+                        BinaryExpression resultExpression2 = Expression.Equal(left, right);
+                        resultExpression = Expression.AndAlso(resultExpression, resultExpression2);
+                    }
+
+                    expressionsList.Add(resultExpression);
+
+                }
+
+                if (expressionsList.Any())
+                {
+                    Expression exps = expressionsList.First();
+                    if (expressionsList.Count > 1)
+                    {
+                        for (int i = 1; i < expressionsList.Count; i++)
+                        {
+                            exps = Expression.OrElse(exps, expressionsList[i]);
+                        }
+                    }
+
+                    MethodCallExpression whereCallExpression = Expression.Call(
+                    typeof(Queryable),
+                    "Where",
+                    new Type[] { this.GetAll().ElementType },
+                    this.GetAll(i => i.Id != newItem.Id).Expression,
+                    Expression.Lambda<Func<T, bool>>(exps, new ParameterExpression[] { e }));
+
+                    List<T> results = await this.GetAll(i => i.Id != newItem.Id).Provider.CreateQuery<T>(whereCallExpression).AsNoTracking().ToListAsync();
+
+                    if (results.Count() > 0)
+                    {
+                        foreach (var prp in valProps)
+                        {
+
+                            object prpValue = newItem.GetType().GetProperty(prp.property.Name).GetValue(newItem, index: null);
+
+                            if (prpValue == null)
+                            {
+                                if (results.Any(i => i.GetType().GetProperty(prp.property.Name).GetValue(i, index: null) == null))
+                                {
+                                    vResults.Add(new ValidationResult((prp.uniqAttr.First() as UniqueAttribute).ErrorMessage, new string[] { prp.property.Name }));
+                                }
+                            }
+                            else if (prp.property.PropertyType == typeof(string))
+                            {
+                                if (results.Where(i => i.GetType().GetProperty(prp.property.Name).GetValue(i, index: null) != null)
+                                    .Any(i => i.GetType().GetProperty(prp.property.Name).GetValue(i, index: null).ToString().Trim().ToUpper()
+                                    == prpValue.ToString().Trim().ToUpper()))
+                                {
+                                    vResults.Add(new ValidationResult((prp.uniqAttr.First() as UniqueAttribute).ErrorMessage, new string[] { prp.property.Name }));
+                                }
+                            }
+                            else
+                            {
+                                if (results.Where(i => i.GetType().GetProperty(prp.property.Name).GetValue(i, index: null) != null).Any(i => i.GetType().GetProperty(prp.property.Name).GetValue(i, index: null).Equals(prpValue)))
+                                {
+                                    vResults.Add(new ValidationResult((prp.uniqAttr.First() as UniqueAttribute).ErrorMessage, new string[] { prp.property.Name }));
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            return vResults;
+        }
+
         public RepositoryActionResult<T> InsertNew(T newItem, bool checkConcurrency = true, bool mergeValues = false, bool validateBeforeSave = true)
         {
             try
@@ -306,7 +541,47 @@ namespace Sameer.Shared.Data
             }
         }
 
+        public async Task<RepositoryActionResult<T>> InsertNewAsync(T newItem, bool checkConcurrency = true, bool mergeValues = false, bool validateBeforeSave = true)
+        {
+            try
+            {
+                ICollection<ValidationResult> itemValidationResult = ValidateNewItem(newItem);
+
+                if (itemValidationResult.Any())
+                {
+                    throw new ValidationException(itemValidationResult.First(), validatingAttribute: null, value: newItem);
+                }
+
+                return this.DirectInsertNew(newItem, checkConcurrency, mergeValues, validateBeforeSave);
+
+            }
+            catch (ValidationException)
+            {
+                throw;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
         protected RepositoryActionResult<T> DirectInsertNew(T newItem, bool checkConcurrency = true, bool mergeValues = false, bool validateBeforeSave = true)
+        {
+            try
+            {
+                return repository.Insert(newItem, checkConcurrency, mergeValues, validateBeforeSave);
+            }
+            catch (ValidationException ex)
+            {
+                throw ex;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        protected async Task<RepositoryActionResult<T>> DirectInsertNewAsync(T newItem, bool checkConcurrency = true, bool mergeValues = false, bool validateBeforeSave = true)
         {
             try
             {

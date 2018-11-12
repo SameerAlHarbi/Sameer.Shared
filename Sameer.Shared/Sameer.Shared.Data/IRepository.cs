@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Threading.Tasks;
 
 namespace Sameer.Shared.Data
 {
@@ -21,6 +22,8 @@ namespace Sameer.Shared.Data
 
         TEntity GetSingleItem<TEntity>(Expression<Func<TEntity, bool>> predicate
         , params Expression<Func<TEntity, object>>[] includeProperties) where TEntity : class;
+
+        Task<TEntity> GetSingleItemAsync<TEntity>(Expression<Func<TEntity, bool>> predicate, params Expression<Func<TEntity, object>>[] includeProperties);
 
         List<TEntity> GetAllLocals<TEntity>() where TEntity : class;
 

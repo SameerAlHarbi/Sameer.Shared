@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Threading.Tasks;
 
 namespace Sameer.Shared.Data
 {
@@ -78,6 +79,18 @@ namespace Sameer.Shared.Data
             try
             {
                 return GetAll(predicate, includeProperties).FirstOrDefault();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public async Task<TEntity> GetSingleItemAsync<TEntity>(Expression<Func<TEntity, bool>> predicate, params Expression<Func<TEntity, object>>[] includeProperties) where TEntity : class
+        {
+            try
+            {
+                return await GetAll(predicate, includeProperties).FirstOrDefaultAsync();
             }
             catch (Exception)
             {
@@ -197,6 +210,57 @@ namespace Sameer.Shared.Data
             }
         }
 
+        protected async Task<int> SaveChangesAsync(bool checkConcurrency = true, bool mergeValues = false, bool validateBeforeSave = true)
+        {
+            try
+            {
+                if (validateBeforeSave)
+                {
+                    ICollection<ValidationResult> vl = ValidateBeforeSave();
+                    if (vl.Count > 0)
+                    {
+                        throw new ValidationException(vl.First(), validatingAttribute: null, value: null);
+                    }
+                }
+
+                return await this.context.SaveChangesAsync();
+            }
+            catch (ValidationException)
+            {
+                throw;
+            }
+            catch (DbUpdateConcurrencyException ex)
+            {
+                foreach (var entry in ex.Entries)
+                {
+                    if (!checkConcurrency)
+                    {
+                        entry.OriginalValues.SetValues(entry.GetDatabaseValues());
+                    }
+                    else
+                    {
+                        if (!mergeValues)
+                        {
+                            entry.Reload();
+                            throw new DbUpdateConcurrencyException(ex.Message, ex.Entries.Select(m => m as Microsoft.EntityFrameworkCore.Update.IUpdateEntry).ToList());
+                        }
+                        else
+                        {
+                            PropertyValues databaseValues = await entry.GetDatabaseValuesAsync();
+                            object mergedValues = MergeNewAndOldValues(entry.OriginalValues, entry.CurrentValues, databaseValues);
+                            entry.OriginalValues.SetValues(databaseValues);
+                            entry.CurrentValues.SetValues(mergedValues);
+                        }
+                    }
+                }
+                return await SaveChangesAsync(checkConcurrency, mergeValues);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
         public RepositoryActionResult<TEntity> Insert<TEntity>
             (TEntity newItem, bool checkConcurrency, bool mergeValues, bool validateBeforeSave) where TEntity : class, new()
         {
@@ -207,6 +271,39 @@ namespace Sameer.Shared.Data
                 this.context.Set<TEntity>().Add(newItem);
 
                 int result = this.SaveChanges(checkConcurrency, mergeValues, validateBeforeSave);
+                if (result > 0)
+                {
+                    return new RepositoryActionResult<TEntity>(newItem, RepositoryActionStatus.Created);
+                }
+                else
+                {
+                    return new RepositoryActionResult<TEntity>(newItem, RepositoryActionStatus.NothingModified, exception: null);
+                }
+            }
+            catch (ValidationException)
+            {
+                throw;
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                throw;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public async Task<RepositoryActionResult<TEntity>> InsertAsync<TEntity>
+            (TEntity newItem, bool checkConcurrency, bool mergeValues, bool validateBeforeSave) where TEntity : class, new()
+        {
+            try
+            {
+                //TODO:Try this
+                //this.context.SetAsAdded(newItem);
+                await this.context.Set<TEntity>().AddAsync(newItem);
+
+                int result = await this.SaveChangesAsync(checkConcurrency, mergeValues, validateBeforeSave);
                 if (result > 0)
                 {
                     return new RepositoryActionResult<TEntity>(newItem, RepositoryActionStatus.Created);
@@ -243,6 +340,46 @@ namespace Sameer.Shared.Data
                 }
 
                 int result = this.SaveChanges(checkConcurrency, mergeValues, validateBeforeSave);
+
+                var results = new List<RepositoryActionResult<TEntity>>();
+
+                if (result > 0)
+                {
+                    foreach (var newItem in newItems)
+                    {
+                        results.Add(new RepositoryActionResult<TEntity>(newItem, RepositoryActionStatus.Created));
+                    }
+                }
+
+                return results;
+            }
+            catch (ValidationException)
+            {
+                throw;
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                throw;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public async Task<IEnumerable<RepositoryActionResult<TEntity>>> InsertManyAsync<TEntity>
+    (IEnumerable<TEntity> newItems, bool checkConcurrency, bool mergeValues, bool validateBeforeSave) where TEntity : class, new()
+        {
+            try
+            {
+                foreach (var newItem in newItems)
+                {
+                    //TODO:Try this
+                    //this.context.SetAsAdded(newItem);
+                    await this.context.Set<TEntity>().AddAsync(newItem);
+                }
+
+                int result = await this.SaveChangesAsync(checkConcurrency, mergeValues, validateBeforeSave);
 
                 var results = new List<RepositoryActionResult<TEntity>>();
 
@@ -312,6 +449,48 @@ namespace Sameer.Shared.Data
             }
         }
 
+        private async Task<RepositoryActionResult<TEntity>> updateItemAsync<TEntity>(TEntity newItem, TEntity itemToUpdate
+    , bool checkConcurrency, bool mergeValues, bool validateBeforeSave)
+    where TEntity : class, new()
+        {
+            try
+            {
+                // change the original entity status to detached; otherwise, we get an error on attach
+                // as the entity is already in the dbSet
+
+                // set original entity state to detached
+                context.Entry(itemToUpdate).State = EntityState.Detached;
+
+                // attach & save
+                context.Set<TEntity>().Attach(newItem);
+
+                // set the updated entity state to modified, so it gets updated.
+                context.Entry(newItem).State = EntityState.Modified;
+
+                int result = await this.SaveChangesAsync(checkConcurrency, mergeValues, validateBeforeSave);
+                if (result > 0)
+                {
+                    return new RepositoryActionResult<TEntity>(newItem, RepositoryActionStatus.Updated);
+                }
+                else
+                {
+                    return new RepositoryActionResult<TEntity>(newItem, RepositoryActionStatus.NothingModified, exception: null);
+                }
+            }
+            catch (ValidationException)
+            {
+                throw;
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                throw;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
         public RepositoryActionResult<TEntity> Update<TEntity>
             (TEntity newItem, bool checkConcurrency, bool mergeValues, bool validateBeforeSave)
             where TEntity : class, ISameerObject, new()
@@ -343,6 +522,37 @@ namespace Sameer.Shared.Data
             }
         }
 
+        public async Task<RepositoryActionResult<TEntity>> UpdateAsync<TEntity>
+    (TEntity newItem, bool checkConcurrency, bool mergeValues, bool validateBeforeSave)
+    where TEntity : class, ISameerObject, new()
+        {
+            try
+            {
+                // you can only update when an data already exists for this id
+
+                TEntity itemToUpdate = await this.GetSingleItemAsync<TEntity>(t => t.Id == newItem.Id);
+
+                if (itemToUpdate == null)
+                {
+                    return new RepositoryActionResult<TEntity>(newItem, RepositoryActionStatus.NotFound);
+                }
+
+                return await updateItemAsync(newItem, itemToUpdate, checkConcurrency, mergeValues, validateBeforeSave);
+            }
+            catch (ValidationException)
+            {
+                throw;
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                throw;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
         public RepositoryActionResult<TEntity> Update<TEntity>
             (TEntity newItem, Expression<Func<TEntity, bool>> existingItemPredicate, bool checkConcurrency, bool mergeValues, bool validateBeforeSave)
             where TEntity : class, new()
@@ -359,6 +569,37 @@ namespace Sameer.Shared.Data
                 }
 
                 return updateItem(newItem, itemToUpdate, checkConcurrency, mergeValues, validateBeforeSave);
+            }
+            catch (ValidationException)
+            {
+                throw;
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                throw;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public async Task<RepositoryActionResult<TEntity>> UpdateAsync<TEntity>
+            (TEntity newItem, Expression<Func<TEntity, bool>> existingItemPredicate, bool checkConcurrency, bool mergeValues, bool validateBeforeSave)
+            where TEntity : class, new()
+        {
+            try
+            {
+                // you can only update when an data already exists for this.
+
+                TEntity itemToUpdate = await this.GetSingleItemAsync(existingItemPredicate);
+
+                if (itemToUpdate == null)
+                {
+                    return new RepositoryActionResult<TEntity>(newItem, RepositoryActionStatus.NotFound);
+                }
+
+                return await updateItemAsync(newItem, itemToUpdate, checkConcurrency, mergeValues, validateBeforeSave);
             }
             catch (ValidationException)
             {
@@ -447,6 +688,35 @@ namespace Sameer.Shared.Data
             }
         }
 
+        private async Task<RepositoryActionResult<TEntity>> deleteItemAsync<TEntity>(TEntity itemToDelete) where TEntity : class, new()
+        {
+            try
+            {
+                context.Set<TEntity>().Remove(itemToDelete);
+                int result = await this.SaveChangesAsync(checkConcurrency: false, mergeValues: false, validateBeforeSave: false);
+                if (result > 0)
+                {
+                    return new RepositoryActionResult<TEntity>(itemToDelete, RepositoryActionStatus.Deleted);
+                }
+                else
+                {
+                    return new RepositoryActionResult<TEntity>(itemToDelete, RepositoryActionStatus.NothingModified, exception: null);
+                }
+            }
+            catch (ValidationException)
+            {
+                throw;
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                throw;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
         public RepositoryActionResult<TEntity> Delete<TEntity>(int itemId) where TEntity : class, ISameerObject, new()
         {
             try
@@ -474,6 +744,33 @@ namespace Sameer.Shared.Data
             }
         }
 
+        public async Task<RepositoryActionResult<TEntity>> DeleteAsync<TEntity>(int itemId) where TEntity : class, ISameerObject, new()
+        {
+            try
+            {
+                TEntity itemToDelete = await this.GetSingleItemAsync<TEntity>(t => t.Id == itemId);
+
+                if (itemToDelete == null)
+                {
+                    return new RepositoryActionResult<TEntity>(entity: null, status: RepositoryActionStatus.NotFound);
+                }
+
+                return await deleteItemAsync(itemToDelete);
+            }
+            catch (ValidationException)
+            {
+                throw;
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                throw;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
         public RepositoryActionResult<TEntity> Delete<TEntity>(Expression<Func<TEntity, bool>> existingItemPredicate) where TEntity : class, new()
         {
             try
@@ -486,6 +783,33 @@ namespace Sameer.Shared.Data
                 }
 
                 return deleteItem(itemToDelete);
+            }
+            catch (ValidationException)
+            {
+                throw;
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                throw;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public async Task<RepositoryActionResult<TEntity>> DeleteAsync<TEntity>(Expression<Func<TEntity, bool>> existingItemPredicate) where TEntity : class, new()
+        {
+            try
+            {
+                TEntity itemToDelete = await this.GetSingleItemAsync(existingItemPredicate);
+
+                if (itemToDelete == null)
+                {
+                    return new RepositoryActionResult<TEntity>(entity: null, status: RepositoryActionStatus.NotFound);
+                }
+
+                return await deleteItemAsync(itemToDelete);
             }
             catch (ValidationException)
             {
@@ -536,6 +860,41 @@ namespace Sameer.Shared.Data
             }
         }
 
+        public async Task<RepositoryActionResult<TEntity>> DeleteAsync<TEntity, TElement>(int itemId
+          , params Expression<Func<TEntity, IEnumerable<TElement>>>[] navigaionPrperties)
+          where TEntity : class, ISameerObject, new()
+          where TElement : class
+        {
+            try
+            {
+                TEntity itemToDelete = await this.GetSingleItemAsync<TEntity>(t => t.Id == itemId);
+
+                if (itemToDelete == null)
+                {
+                    return new RepositoryActionResult<TEntity>(entity: null, status: RepositoryActionStatus.NotFound);
+                }
+
+                foreach (var navigaionPrperty in navigaionPrperties)
+                {
+                    context.Entry(itemToDelete).Collection(navigaionPrperty).Load();
+                }
+
+                return await deleteItemAsync(itemToDelete);
+            }
+            catch (ValidationException)
+            {
+                throw;
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                throw;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
         public RepositoryActionResult<TEntity> Delete<TEntity, TElement>(Expression<Func<TEntity, bool>> existingItemPredicate
             , params Expression<Func<TEntity, IEnumerable<TElement>>>[] navigaionPrperties)
             where TEntity : class, new()
@@ -556,6 +915,41 @@ namespace Sameer.Shared.Data
                 }
 
                 return deleteItem(itemToDelete);
+            }
+            catch (ValidationException)
+            {
+                throw;
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                throw;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public async Task<RepositoryActionResult<TEntity>> DeleteAsync<TEntity, TElement>(Expression<Func<TEntity, bool>> existingItemPredicate
+          , params Expression<Func<TEntity, IEnumerable<TElement>>>[] navigaionPrperties)
+            where TEntity : class, new()
+            where TElement : class
+        {
+            try
+            {
+                TEntity itemToDelete = await this.GetSingleItemAsync<TEntity>(existingItemPredicate);
+
+                if (itemToDelete == null)
+                {
+                    return new RepositoryActionResult<TEntity>(entity: null, status: RepositoryActionStatus.NotFound);
+                }
+
+                foreach (var navigaionPrperty in navigaionPrperties)
+                {
+                    context.Entry(itemToDelete).Collection(navigaionPrperty).Load();
+                }
+
+                return await deleteItemAsync(itemToDelete);
             }
             catch (ValidationException)
             {
@@ -620,6 +1014,55 @@ namespace Sameer.Shared.Data
             }
         }
 
+
+        public async Task<IEnumerable<RepositoryActionResult<TEntity>>> DeleteAllAsync<TEntity>(int[] itemsIds) where TEntity : class, ISameerObject, new()
+        {
+            try
+            {
+                List<TEntity> itemsToDelete = await this.GetAll<TEntity>(itm => itemsIds.Contains(itm.Id)).ToListAsync();
+
+                if (itemsToDelete == null || itemsToDelete.Count() < 1)
+                {
+                    return new List<RepositoryActionResult<TEntity>> { new RepositoryActionResult<TEntity>(entity: null, status: RepositoryActionStatus.NotFound) };
+                }
+
+                foreach (var item in itemsToDelete)
+                {
+                    context.Set<TEntity>().Remove(item);
+                }
+
+                int result = await this.SaveChangesAsync(checkConcurrency: false, mergeValues: false, validateBeforeSave: false);
+
+                var results = new List<RepositoryActionResult<TEntity>>();
+
+
+                foreach (var item in itemsToDelete)
+                {
+                    if (result > 0)
+                    {
+                        results.Add(new RepositoryActionResult<TEntity>(item, RepositoryActionStatus.Deleted));
+                    }
+                    else
+                    {
+                        results.Add(new RepositoryActionResult<TEntity>(item, RepositoryActionStatus.NothingModified));
+                    }
+                }
+
+                return results;
+            }
+            catch (ValidationException)
+            {
+                throw;
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                throw;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
         public IEnumerable<RepositoryActionResult<TEntity>> DeleteAll<TEntity>(Expression<Func<TEntity, bool>> existingItemsPredicate)
             where TEntity : class, new()
         {
@@ -638,6 +1081,56 @@ namespace Sameer.Shared.Data
                 }
 
                 int result = this.SaveChanges(checkConcurrency: false, mergeValues: false, validateBeforeSave: false);
+
+                var results = new List<RepositoryActionResult<TEntity>>();
+
+
+                foreach (var item in itemsToDelete)
+                {
+                    if (result > 0)
+                    {
+                        results.Add(new RepositoryActionResult<TEntity>(item, RepositoryActionStatus.Deleted));
+                    }
+                    else
+                    {
+                        results.Add(new RepositoryActionResult<TEntity>(item, RepositoryActionStatus.NothingModified));
+                    }
+                }
+
+                return results;
+            }
+            catch (ValidationException)
+            {
+                throw;
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                throw;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public async Task<IEnumerable<RepositoryActionResult<TEntity>>> DeleteAllAsync<TEntity>(Expression<Func<TEntity, bool>> existingItemsPredicate)
+           where TEntity : class, new()
+        {
+            try
+            {
+                List<TEntity> itemsToDelete = await this.GetAll(existingItemsPredicate).ToListAsync();
+
+                if (itemsToDelete == null || itemsToDelete.Count() < 1)
+                {
+                    return new List<RepositoryActionResult<TEntity>> { new RepositoryActionResult<TEntity>(entity: null, status: RepositoryActionStatus.NotFound) };
+                }
+
+                foreach (var item in itemsToDelete)
+                {
+                    context.Set<TEntity>().Remove(item);
+                }
+
+                int result = await this.SaveChangesAsync(checkConcurrency: false, mergeValues: false, validateBeforeSave: false);
 
                 var results = new List<RepositoryActionResult<TEntity>>();
 
