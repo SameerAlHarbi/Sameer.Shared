@@ -11,7 +11,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sameer.Shared.Test", "Samee
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sameer.Shared.Data", "Sameer.Shared.Data\Sameer.Shared.Data.csproj", "{65D20FDE-6B0A-4D01-9663-B4EA4272F538}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sameer.Shared.ConsoleTest", "Sameer.Shared.ConsoleTest\Sameer.Shared.ConsoleTest.csproj", "{101C7CBB-E954-4CE1-AC99-462181EAFD2B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sameer.Shared.ConsoleTest", "Sameer.Shared.ConsoleTest\Sameer.Shared.ConsoleTest.csproj", "{101C7CBB-E954-4CE1-AC99-462181EAFD2B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sameer.Shared.Helpers.Mvc", "Sameer.Shared.Helpers.Mvc\Sameer.Shared.Helpers.Mvc.csproj", "{79F4C42D-50D1-4C25-89A9-B39D5829560D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{101C7CBB-E954-4CE1-AC99-462181EAFD2B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{101C7CBB-E954-4CE1-AC99-462181EAFD2B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{101C7CBB-E954-4CE1-AC99-462181EAFD2B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{79F4C42D-50D1-4C25-89A9-B39D5829560D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{79F4C42D-50D1-4C25-89A9-B39D5829560D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{79F4C42D-50D1-4C25-89A9-B39D5829560D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{79F4C42D-50D1-4C25-89A9-B39D5829560D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

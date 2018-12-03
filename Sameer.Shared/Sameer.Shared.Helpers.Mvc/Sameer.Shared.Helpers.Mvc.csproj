@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <Authors>Sameer Al Harbi</Authors>
+    <Company>Saudi Geological Survey</Company>
+    <Description>Contains shared dll's and extinsions for comman Asp.Net Core programming and data operations.</Description>
+    <Copyright>Sameer Al Harbi 2018</Copyright>
+    <PackageProjectUrl>https://github.com/SameerAlHarbi/Sameer.Shared</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/SameerAlHarbi/Sameer.Shared.git</RepositoryUrl>
+    <RepositoryType>Git</RepositoryType>
+    <PackageTags>.net statndard,Data,entityframework,core,middleware</PackageTags>
+    <NeutralLanguage>English (United States)</NeutralLanguage>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.1.1" />
+    <PackageReference Include="Microsoft.AspNetCore.StaticFiles" Version="2.1.1" />
+    <PackageReference Include="Microsoft.Extensions.FileProviders.Physical" Version="2.1.1" />
+  </ItemGroup>
+
+</Project>
