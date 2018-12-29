@@ -9,6 +9,7 @@ namespace Sameer.Shared.Data
 {
     public interface IRepository : IDisposable
     {
+
         #region Get Methods
 
         IQueryable<TEntity> GetAll<TEntity>(Expression<Func<TEntity, bool>> predicate = null
@@ -32,81 +33,82 @@ namespace Sameer.Shared.Data
 
         #region Insert Update Delete
 
-        RepositoryActionResult<TEntity> Insert<TEntity>(TEntity newItem,
+        DataActionResult<TEntity> Insert<TEntity>(TEntity newItem,
         bool checkConcurrency = true,
         bool mergeValues = false,
         bool validateBeforeSave = true) where TEntity : class, new();
 
-        Task<RepositoryActionResult<TEntity>> InsertAsync<TEntity>
+        Task<DataActionResult<TEntity>> InsertAsync<TEntity>
             (TEntity newItem, bool checkConcurrency, bool mergeValues, bool validateBeforeSave) 
             where TEntity : class, new();
 
-        IEnumerable<RepositoryActionResult<TEntity>> InsertMany<TEntity>(IEnumerable<TEntity> newItems,
+        IEnumerable<DataActionResult<TEntity>> InsertMany<TEntity>(IEnumerable<TEntity> newItems,
         bool checkConcurrency = true,
         bool mergeValues = false,
         bool validateBeforeSave = true) where TEntity : class, new();
 
-        Task<IEnumerable<RepositoryActionResult<TEntity>>> InsertManyAsync<TEntity>
+        Task<IEnumerable<DataActionResult<TEntity>>> InsertManyAsync<TEntity>
         (IEnumerable<TEntity> newItems, bool checkConcurrency, bool mergeValues, bool validateBeforeSave) 
             where TEntity : class, new();
 
-        RepositoryActionResult<TEntity> Update<TEntity>(TEntity newItem,
+        DataActionResult<TEntity> Update<TEntity>(TEntity newItem,
         bool checkConcurrency = true,
         bool mergeValues = false,
         bool validateBeforeSave = true) where TEntity : class, ISameerObject, new();
 
-        Task<RepositoryActionResult<TEntity>> UpdateAsync<TEntity>
+        Task<DataActionResult<TEntity>> UpdateAsync<TEntity>
         (TEntity newItem, bool checkConcurrency, bool mergeValues, bool validateBeforeSave)
         where TEntity : class, ISameerObject, new();
 
-        RepositoryActionResult<TEntity> Update<TEntity>(TEntity newItem,
+        DataActionResult<TEntity> Update<TEntity>(TEntity newItem,
         Expression<Func<TEntity, bool>> existingItemPredicate,
         bool checkConcurrency = true,
         bool mergeValues = false,
         bool validateBeforeSave = true) where TEntity : class, new();
 
-        Task<RepositoryActionResult<TEntity>> UpdateAsync<TEntity>
+        Task<DataActionResult<TEntity>> UpdateAsync<TEntity>
             (TEntity newItem, Expression<Func<TEntity, bool>> existingItemPredicate, bool checkConcurrency, bool mergeValues, bool validateBeforeSave)
             where TEntity : class, new();
 
-        RepositoryActionResult<TEntity> Delete<TEntity>(int itemId) where TEntity : class, ISameerObject, new();
+        DataActionResult<TEntity> Delete<TEntity>(int itemId) where TEntity : class, ISameerObject, new();
 
-        Task<RepositoryActionResult<TEntity>> DeleteAsync<TEntity>(int itemId) where TEntity : class, ISameerObject, new();
+        Task<DataActionResult<TEntity>> DeleteAsync<TEntity>(int itemId) where TEntity : class, ISameerObject, new();
 
-        RepositoryActionResult<TEntity> Delete<TEntity>(Expression<Func<TEntity, bool>> existingItemPredicate)
+        DataActionResult<TEntity> Delete<TEntity>(Expression<Func<TEntity, bool>> existingItemPredicate)
             where TEntity : class, new();
 
-        Task<RepositoryActionResult<TEntity>> DeleteAsync<TEntity>(Expression<Func<TEntity, bool>> existingItemPredicate)
+        Task<DataActionResult<TEntity>> DeleteAsync<TEntity>(Expression<Func<TEntity, bool>> existingItemPredicate)
             where TEntity : class, new();
 
-        RepositoryActionResult<TEntity> Delete<TEntity, TElement>(int itemId, params Expression<Func<TEntity, IEnumerable<TElement>>>[] navigaionPrperties)
+        DataActionResult<TEntity> Delete<TEntity, TElement>(int itemId, params Expression<Func<TEntity, IEnumerable<TElement>>>[] navigaionPrperties)
             where TEntity : class, ISameerObject, new()
             where TElement : class;
 
-        Task<RepositoryActionResult<TEntity>> DeleteAsync<TEntity, TElement>(int itemId
+        Task<DataActionResult<TEntity>> DeleteAsync<TEntity, TElement>(int itemId
           , params Expression<Func<TEntity, IEnumerable<TElement>>>[] navigaionPrperties)
           where TEntity : class, ISameerObject, new()
           where TElement : class;
 
-        RepositoryActionResult<TEntity> Delete<TEntity, TElement>(Expression<Func<TEntity, bool>> existingItemPredicate
+        DataActionResult<TEntity> Delete<TEntity, TElement>(Expression<Func<TEntity, bool>> existingItemPredicate
             , params Expression<Func<TEntity, IEnumerable<TElement>>>[] navigaionPrperties)
             where TEntity : class, new()
             where TElement : class;
 
-        Task<RepositoryActionResult<TEntity>> DeleteAsync<TEntity, TElement>(Expression<Func<TEntity, bool>> existingItemPredicate
+        Task<DataActionResult<TEntity>> DeleteAsync<TEntity, TElement>(Expression<Func<TEntity, bool>> existingItemPredicate
           , params Expression<Func<TEntity, IEnumerable<TElement>>>[] navigaionPrperties)
             where TEntity : class, new()
             where TElement : class;
 
-        IEnumerable<RepositoryActionResult<TEntity>> DeleteAll<TEntity>(int[] itemsIds) where TEntity : class, ISameerObject, new();
+        IEnumerable<DataActionResult<TEntity>> DeleteAll<TEntity>(int[] itemsIds) where TEntity : class, ISameerObject, new();
 
-        Task<IEnumerable<RepositoryActionResult<TEntity>>> DeleteAllAsync<TEntity>(int[] itemsIds) where TEntity : class, ISameerObject, new();
+        Task<IEnumerable<DataActionResult<TEntity>>> DeleteAllAsync<TEntity>(int[] itemsIds) where TEntity : class, ISameerObject, new();
 
-        IEnumerable<RepositoryActionResult<TEntity>> DeleteAll<TEntity>(Expression<Func<TEntity, bool>> existingItemsPredicate) where TEntity : class, new();
+        IEnumerable<DataActionResult<TEntity>> DeleteAll<TEntity>(Expression<Func<TEntity, bool>> existingItemsPredicate) where TEntity : class, new();
 
-        Task<IEnumerable<RepositoryActionResult<TEntity>>> DeleteAllAsync<TEntity>(Expression<Func<TEntity, bool>> existingItemsPredicate)
+        Task<IEnumerable<DataActionResult<TEntity>>> DeleteAllAsync<TEntity>(Expression<Func<TEntity, bool>> existingItemsPredicate)
            where TEntity : class, new();
 
         #endregion
+
     }
 }

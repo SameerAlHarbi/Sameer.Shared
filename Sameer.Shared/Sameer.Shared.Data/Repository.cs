@@ -262,7 +262,7 @@ namespace Sameer.Shared.Data
             }
         }
 
-        public RepositoryActionResult<TEntity> Insert<TEntity>
+        public DataActionResult<TEntity> Insert<TEntity>
             (TEntity newItem, bool checkConcurrency, bool mergeValues, bool validateBeforeSave) where TEntity : class, new()
         {
             try
@@ -274,11 +274,11 @@ namespace Sameer.Shared.Data
                 int result = this.SaveChanges(checkConcurrency, mergeValues, validateBeforeSave);
                 if (result > 0)
                 {
-                    return new RepositoryActionResult<TEntity>(newItem, RepositoryActionStatus.Created);
+                    return new DataActionResult<TEntity>(newItem, RepositoryActionStatus.Created);
                 }
                 else
                 {
-                    return new RepositoryActionResult<TEntity>(newItem, RepositoryActionStatus.NothingModified, exception: null);
+                    return new DataActionResult<TEntity>(newItem, RepositoryActionStatus.NothingModified, exception: null);
                 }
             }
             catch (ValidationException)
@@ -295,7 +295,7 @@ namespace Sameer.Shared.Data
             }
         }
 
-        public async Task<RepositoryActionResult<TEntity>> InsertAsync<TEntity>
+        public async Task<DataActionResult<TEntity>> InsertAsync<TEntity>
             (TEntity newItem, bool checkConcurrency, bool mergeValues, bool validateBeforeSave) where TEntity : class, new()
         {
             try
@@ -307,11 +307,11 @@ namespace Sameer.Shared.Data
                 int result = await this.SaveChangesAsync(checkConcurrency, mergeValues, validateBeforeSave);
                 if (result > 0)
                 {
-                    return new RepositoryActionResult<TEntity>(newItem, RepositoryActionStatus.Created);
+                    return new DataActionResult<TEntity>(newItem, RepositoryActionStatus.Created);
                 }
                 else
                 {
-                    return new RepositoryActionResult<TEntity>(newItem, RepositoryActionStatus.NothingModified, exception: null);
+                    return new DataActionResult<TEntity>(newItem, RepositoryActionStatus.NothingModified, exception: null);
                 }
             }
             catch (ValidationException)
@@ -328,7 +328,7 @@ namespace Sameer.Shared.Data
             }
         }
 
-        public IEnumerable<RepositoryActionResult<TEntity>> InsertMany<TEntity>
+        public IEnumerable<DataActionResult<TEntity>> InsertMany<TEntity>
             (IEnumerable<TEntity> newItems, bool checkConcurrency, bool mergeValues, bool validateBeforeSave) where TEntity : class, new()
         {
             try
@@ -342,13 +342,13 @@ namespace Sameer.Shared.Data
 
                 int result = this.SaveChanges(checkConcurrency, mergeValues, validateBeforeSave);
 
-                var results = new List<RepositoryActionResult<TEntity>>();
+                var results = new List<DataActionResult<TEntity>>();
 
                 if (result > 0)
                 {
                     foreach (var newItem in newItems)
                     {
-                        results.Add(new RepositoryActionResult<TEntity>(newItem, RepositoryActionStatus.Created));
+                        results.Add(new DataActionResult<TEntity>(newItem, RepositoryActionStatus.Created));
                     }
                 }
 
@@ -368,7 +368,7 @@ namespace Sameer.Shared.Data
             }
         }
 
-        public async Task<IEnumerable<RepositoryActionResult<TEntity>>> InsertManyAsync<TEntity>
+        public async Task<IEnumerable<DataActionResult<TEntity>>> InsertManyAsync<TEntity>
     (IEnumerable<TEntity> newItems, bool checkConcurrency, bool mergeValues, bool validateBeforeSave) where TEntity : class, new()
         {
             try
@@ -382,13 +382,13 @@ namespace Sameer.Shared.Data
 
                 int result = await this.SaveChangesAsync(checkConcurrency, mergeValues, validateBeforeSave);
 
-                var results = new List<RepositoryActionResult<TEntity>>();
+                var results = new List<DataActionResult<TEntity>>();
 
                 if (result > 0)
                 {
                     foreach (var newItem in newItems)
                     {
-                        results.Add(new RepositoryActionResult<TEntity>(newItem, RepositoryActionStatus.Created));
+                        results.Add(new DataActionResult<TEntity>(newItem, RepositoryActionStatus.Created));
                     }
                 }
 
@@ -408,7 +408,7 @@ namespace Sameer.Shared.Data
             }
         }
 
-        private RepositoryActionResult<TEntity> updateItem<TEntity>(TEntity newItem, TEntity itemToUpdate
+        private DataActionResult<TEntity> updateItem<TEntity>(TEntity newItem, TEntity itemToUpdate
             , bool checkConcurrency, bool mergeValues, bool validateBeforeSave)
             where TEntity : class, new()
         {
@@ -429,11 +429,11 @@ namespace Sameer.Shared.Data
                 int result = this.SaveChanges(checkConcurrency, mergeValues, validateBeforeSave);
                 if (result > 0)
                 {
-                    return new RepositoryActionResult<TEntity>(newItem, RepositoryActionStatus.Updated);
+                    return new DataActionResult<TEntity>(newItem, RepositoryActionStatus.Updated);
                 }
                 else
                 {
-                    return new RepositoryActionResult<TEntity>(newItem, RepositoryActionStatus.NothingModified, exception: null);
+                    return new DataActionResult<TEntity>(newItem, RepositoryActionStatus.NothingModified, exception: null);
                 }
             }
             catch (ValidationException)
@@ -450,7 +450,7 @@ namespace Sameer.Shared.Data
             }
         }
 
-        private async Task<RepositoryActionResult<TEntity>> updateItemAsync<TEntity>(TEntity newItem, TEntity itemToUpdate
+        private async Task<DataActionResult<TEntity>> updateItemAsync<TEntity>(TEntity newItem, TEntity itemToUpdate
     , bool checkConcurrency, bool mergeValues, bool validateBeforeSave)
     where TEntity : class, new()
         {
@@ -471,11 +471,11 @@ namespace Sameer.Shared.Data
                 int result = await this.SaveChangesAsync(checkConcurrency, mergeValues, validateBeforeSave);
                 if (result > 0)
                 {
-                    return new RepositoryActionResult<TEntity>(newItem, RepositoryActionStatus.Updated);
+                    return new DataActionResult<TEntity>(newItem, RepositoryActionStatus.Updated);
                 }
                 else
                 {
-                    return new RepositoryActionResult<TEntity>(newItem, RepositoryActionStatus.NothingModified, exception: null);
+                    return new DataActionResult<TEntity>(newItem, RepositoryActionStatus.NothingModified, exception: null);
                 }
             }
             catch (ValidationException)
@@ -492,7 +492,7 @@ namespace Sameer.Shared.Data
             }
         }
 
-        public RepositoryActionResult<TEntity> Update<TEntity>
+        public DataActionResult<TEntity> Update<TEntity>
             (TEntity newItem, bool checkConcurrency, bool mergeValues, bool validateBeforeSave)
             where TEntity : class, ISameerObject, new()
         {
@@ -504,7 +504,7 @@ namespace Sameer.Shared.Data
 
                 if (itemToUpdate == null)
                 {
-                    return new RepositoryActionResult<TEntity>(newItem, RepositoryActionStatus.NotFound);
+                    return new DataActionResult<TEntity>(newItem, RepositoryActionStatus.NotFound);
                 }
 
                 return updateItem(newItem, itemToUpdate, checkConcurrency, mergeValues, validateBeforeSave);
@@ -523,7 +523,7 @@ namespace Sameer.Shared.Data
             }
         }
 
-        public async Task<RepositoryActionResult<TEntity>> UpdateAsync<TEntity>
+        public async Task<DataActionResult<TEntity>> UpdateAsync<TEntity>
     (TEntity newItem, bool checkConcurrency, bool mergeValues, bool validateBeforeSave)
     where TEntity : class, ISameerObject, new()
         {
@@ -535,7 +535,7 @@ namespace Sameer.Shared.Data
 
                 if (itemToUpdate == null)
                 {
-                    return new RepositoryActionResult<TEntity>(newItem, RepositoryActionStatus.NotFound);
+                    return new DataActionResult<TEntity>(newItem, RepositoryActionStatus.NotFound);
                 }
 
                 return await updateItemAsync(newItem, itemToUpdate, checkConcurrency, mergeValues, validateBeforeSave);
@@ -554,7 +554,7 @@ namespace Sameer.Shared.Data
             }
         }
 
-        public RepositoryActionResult<TEntity> Update<TEntity>
+        public DataActionResult<TEntity> Update<TEntity>
             (TEntity newItem, Expression<Func<TEntity, bool>> existingItemPredicate, bool checkConcurrency, bool mergeValues, bool validateBeforeSave)
             where TEntity : class, new()
         {
@@ -566,7 +566,7 @@ namespace Sameer.Shared.Data
 
                 if (itemToUpdate == null)
                 {
-                    return new RepositoryActionResult<TEntity>(newItem, RepositoryActionStatus.NotFound);
+                    return new DataActionResult<TEntity>(newItem, RepositoryActionStatus.NotFound);
                 }
 
                 return updateItem(newItem, itemToUpdate, checkConcurrency, mergeValues, validateBeforeSave);
@@ -585,7 +585,7 @@ namespace Sameer.Shared.Data
             }
         }
 
-        public async Task<RepositoryActionResult<TEntity>> UpdateAsync<TEntity>
+        public async Task<DataActionResult<TEntity>> UpdateAsync<TEntity>
             (TEntity newItem, Expression<Func<TEntity, bool>> existingItemPredicate, bool checkConcurrency, bool mergeValues, bool validateBeforeSave)
             where TEntity : class, new()
         {
@@ -597,7 +597,7 @@ namespace Sameer.Shared.Data
 
                 if (itemToUpdate == null)
                 {
-                    return new RepositoryActionResult<TEntity>(newItem, RepositoryActionStatus.NotFound);
+                    return new DataActionResult<TEntity>(newItem, RepositoryActionStatus.NotFound);
                 }
 
                 return await updateItemAsync(newItem, itemToUpdate, checkConcurrency, mergeValues, validateBeforeSave);
@@ -660,7 +660,7 @@ namespace Sameer.Shared.Data
         //    }
         //}
 
-        private RepositoryActionResult<TEntity> deleteItem<TEntity>(TEntity itemToDelete) where TEntity : class, new()
+        private DataActionResult<TEntity> deleteItem<TEntity>(TEntity itemToDelete) where TEntity : class, new()
         {
             try
             {
@@ -668,11 +668,11 @@ namespace Sameer.Shared.Data
                 int result = this.SaveChanges(checkConcurrency: false, mergeValues: false, validateBeforeSave: false);
                 if (result > 0)
                 {
-                    return new RepositoryActionResult<TEntity>(itemToDelete, RepositoryActionStatus.Deleted);
+                    return new DataActionResult<TEntity>(itemToDelete, RepositoryActionStatus.Deleted);
                 }
                 else
                 {
-                    return new RepositoryActionResult<TEntity>(itemToDelete, RepositoryActionStatus.NothingModified, exception: null);
+                    return new DataActionResult<TEntity>(itemToDelete, RepositoryActionStatus.NothingModified, exception: null);
                 }
             }
             catch (ValidationException)
@@ -689,7 +689,7 @@ namespace Sameer.Shared.Data
             }
         }
 
-        private async Task<RepositoryActionResult<TEntity>> deleteItemAsync<TEntity>(TEntity itemToDelete) where TEntity : class, new()
+        private async Task<DataActionResult<TEntity>> deleteItemAsync<TEntity>(TEntity itemToDelete) where TEntity : class, new()
         {
             try
             {
@@ -697,11 +697,11 @@ namespace Sameer.Shared.Data
                 int result = await this.SaveChangesAsync(checkConcurrency: false, mergeValues: false, validateBeforeSave: false);
                 if (result > 0)
                 {
-                    return new RepositoryActionResult<TEntity>(itemToDelete, RepositoryActionStatus.Deleted);
+                    return new DataActionResult<TEntity>(itemToDelete, RepositoryActionStatus.Deleted);
                 }
                 else
                 {
-                    return new RepositoryActionResult<TEntity>(itemToDelete, RepositoryActionStatus.NothingModified, exception: null);
+                    return new DataActionResult<TEntity>(itemToDelete, RepositoryActionStatus.NothingModified, exception: null);
                 }
             }
             catch (ValidationException)
@@ -718,7 +718,7 @@ namespace Sameer.Shared.Data
             }
         }
 
-        public RepositoryActionResult<TEntity> Delete<TEntity>(int itemId) where TEntity : class, ISameerObject, new()
+        public DataActionResult<TEntity> Delete<TEntity>(int itemId) where TEntity : class, ISameerObject, new()
         {
             try
             {
@@ -726,7 +726,7 @@ namespace Sameer.Shared.Data
 
                 if (itemToDelete == null)
                 {
-                    return new RepositoryActionResult<TEntity>(entity: null, status: RepositoryActionStatus.NotFound);
+                    return new DataActionResult<TEntity>(entity: null, status: RepositoryActionStatus.NotFound);
                 }
 
                 return deleteItem(itemToDelete);
@@ -745,7 +745,7 @@ namespace Sameer.Shared.Data
             }
         }
 
-        public async Task<RepositoryActionResult<TEntity>> DeleteAsync<TEntity>(int itemId) where TEntity : class, ISameerObject, new()
+        public async Task<DataActionResult<TEntity>> DeleteAsync<TEntity>(int itemId) where TEntity : class, ISameerObject, new()
         {
             try
             {
@@ -753,7 +753,7 @@ namespace Sameer.Shared.Data
 
                 if (itemToDelete == null)
                 {
-                    return new RepositoryActionResult<TEntity>(entity: null, status: RepositoryActionStatus.NotFound);
+                    return new DataActionResult<TEntity>(entity: null, status: RepositoryActionStatus.NotFound);
                 }
 
                 return await deleteItemAsync(itemToDelete);
@@ -772,7 +772,7 @@ namespace Sameer.Shared.Data
             }
         }
 
-        public RepositoryActionResult<TEntity> Delete<TEntity>(Expression<Func<TEntity, bool>> existingItemPredicate) where TEntity : class, new()
+        public DataActionResult<TEntity> Delete<TEntity>(Expression<Func<TEntity, bool>> existingItemPredicate) where TEntity : class, new()
         {
             try
             {
@@ -780,7 +780,7 @@ namespace Sameer.Shared.Data
 
                 if (itemToDelete == null)
                 {
-                    return new RepositoryActionResult<TEntity>(entity: null, status: RepositoryActionStatus.NotFound);
+                    return new DataActionResult<TEntity>(entity: null, status: RepositoryActionStatus.NotFound);
                 }
 
                 return deleteItem(itemToDelete);
@@ -799,7 +799,7 @@ namespace Sameer.Shared.Data
             }
         }
 
-        public async Task<RepositoryActionResult<TEntity>> DeleteAsync<TEntity>(Expression<Func<TEntity, bool>> existingItemPredicate) where TEntity : class, new()
+        public async Task<DataActionResult<TEntity>> DeleteAsync<TEntity>(Expression<Func<TEntity, bool>> existingItemPredicate) where TEntity : class, new()
         {
             try
             {
@@ -807,7 +807,7 @@ namespace Sameer.Shared.Data
 
                 if (itemToDelete == null)
                 {
-                    return new RepositoryActionResult<TEntity>(entity: null, status: RepositoryActionStatus.NotFound);
+                    return new DataActionResult<TEntity>(entity: null, status: RepositoryActionStatus.NotFound);
                 }
 
                 return await deleteItemAsync(itemToDelete);
@@ -826,7 +826,7 @@ namespace Sameer.Shared.Data
             }
         }
 
-        public RepositoryActionResult<TEntity> Delete<TEntity, TElement>(int itemId
+        public DataActionResult<TEntity> Delete<TEntity, TElement>(int itemId
             , params Expression<Func<TEntity, IEnumerable<TElement>>>[] navigaionPrperties)
             where TEntity : class, ISameerObject, new()
             where TElement : class
@@ -837,7 +837,7 @@ namespace Sameer.Shared.Data
 
                 if (itemToDelete == null)
                 {
-                    return new RepositoryActionResult<TEntity>(entity: null, status: RepositoryActionStatus.NotFound);
+                    return new DataActionResult<TEntity>(entity: null, status: RepositoryActionStatus.NotFound);
                 }
 
                 foreach (var navigaionPrperty in navigaionPrperties)
@@ -861,7 +861,7 @@ namespace Sameer.Shared.Data
             }
         }
 
-        public async Task<RepositoryActionResult<TEntity>> DeleteAsync<TEntity, TElement>(int itemId
+        public async Task<DataActionResult<TEntity>> DeleteAsync<TEntity, TElement>(int itemId
           , params Expression<Func<TEntity, IEnumerable<TElement>>>[] navigaionPrperties)
           where TEntity : class, ISameerObject, new()
           where TElement : class
@@ -872,7 +872,7 @@ namespace Sameer.Shared.Data
 
                 if (itemToDelete == null)
                 {
-                    return new RepositoryActionResult<TEntity>(entity: null, status: RepositoryActionStatus.NotFound);
+                    return new DataActionResult<TEntity>(entity: null, status: RepositoryActionStatus.NotFound);
                 }
 
                 foreach (var navigaionPrperty in navigaionPrperties)
@@ -896,7 +896,7 @@ namespace Sameer.Shared.Data
             }
         }
 
-        public RepositoryActionResult<TEntity> Delete<TEntity, TElement>(Expression<Func<TEntity, bool>> existingItemPredicate
+        public DataActionResult<TEntity> Delete<TEntity, TElement>(Expression<Func<TEntity, bool>> existingItemPredicate
             , params Expression<Func<TEntity, IEnumerable<TElement>>>[] navigaionPrperties)
             where TEntity : class, new()
             where TElement : class
@@ -907,7 +907,7 @@ namespace Sameer.Shared.Data
 
                 if (itemToDelete == null)
                 {
-                    return new RepositoryActionResult<TEntity>(entity: null, status: RepositoryActionStatus.NotFound);
+                    return new DataActionResult<TEntity>(entity: null, status: RepositoryActionStatus.NotFound);
                 }
 
                 foreach (var navigaionPrperty in navigaionPrperties)
@@ -931,7 +931,7 @@ namespace Sameer.Shared.Data
             }
         }
 
-        public async Task<RepositoryActionResult<TEntity>> DeleteAsync<TEntity, TElement>(Expression<Func<TEntity, bool>> existingItemPredicate
+        public async Task<DataActionResult<TEntity>> DeleteAsync<TEntity, TElement>(Expression<Func<TEntity, bool>> existingItemPredicate
           , params Expression<Func<TEntity, IEnumerable<TElement>>>[] navigaionPrperties)
             where TEntity : class, new()
             where TElement : class
@@ -942,7 +942,7 @@ namespace Sameer.Shared.Data
 
                 if (itemToDelete == null)
                 {
-                    return new RepositoryActionResult<TEntity>(entity: null, status: RepositoryActionStatus.NotFound);
+                    return new DataActionResult<TEntity>(entity: null, status: RepositoryActionStatus.NotFound);
                 }
 
                 foreach (var navigaionPrperty in navigaionPrperties)
@@ -966,7 +966,7 @@ namespace Sameer.Shared.Data
             }
         }
 
-        public IEnumerable<RepositoryActionResult<TEntity>> DeleteAll<TEntity>(int[] itemsIds) where TEntity : class, ISameerObject, new()
+        public IEnumerable<DataActionResult<TEntity>> DeleteAll<TEntity>(int[] itemsIds) where TEntity : class, ISameerObject, new()
         {
             try
             {
@@ -974,7 +974,7 @@ namespace Sameer.Shared.Data
 
                 if (itemsToDelete == null || itemsToDelete.Count() < 1)
                 {
-                    return new List<RepositoryActionResult<TEntity>> { new RepositoryActionResult<TEntity>(entity: null, status: RepositoryActionStatus.NotFound) };
+                    return new List<DataActionResult<TEntity>> { new DataActionResult<TEntity>(entity: null, status: RepositoryActionStatus.NotFound) };
                 }
 
                 foreach (var item in itemsToDelete)
@@ -984,18 +984,18 @@ namespace Sameer.Shared.Data
 
                 int result = this.SaveChanges(checkConcurrency: false, mergeValues: false, validateBeforeSave: false);
 
-                var results = new List<RepositoryActionResult<TEntity>>();
+                var results = new List<DataActionResult<TEntity>>();
 
 
                 foreach (var item in itemsToDelete)
                 {
                     if (result > 0)
                     {
-                        results.Add(new RepositoryActionResult<TEntity>(item, RepositoryActionStatus.Deleted));
+                        results.Add(new DataActionResult<TEntity>(item, RepositoryActionStatus.Deleted));
                     }
                     else
                     {
-                        results.Add(new RepositoryActionResult<TEntity>(item, RepositoryActionStatus.NothingModified));
+                        results.Add(new DataActionResult<TEntity>(item, RepositoryActionStatus.NothingModified));
                     }
                 }
 
@@ -1016,7 +1016,7 @@ namespace Sameer.Shared.Data
         }
 
 
-        public async Task<IEnumerable<RepositoryActionResult<TEntity>>> DeleteAllAsync<TEntity>(int[] itemsIds) where TEntity : class, ISameerObject, new()
+        public async Task<IEnumerable<DataActionResult<TEntity>>> DeleteAllAsync<TEntity>(int[] itemsIds) where TEntity : class, ISameerObject, new()
         {
             try
             {
@@ -1024,7 +1024,7 @@ namespace Sameer.Shared.Data
 
                 if (itemsToDelete == null || itemsToDelete.Count() < 1)
                 {
-                    return new List<RepositoryActionResult<TEntity>> { new RepositoryActionResult<TEntity>(entity: null, status: RepositoryActionStatus.NotFound) };
+                    return new List<DataActionResult<TEntity>> { new DataActionResult<TEntity>(entity: null, status: RepositoryActionStatus.NotFound) };
                 }
 
                 foreach (var item in itemsToDelete)
@@ -1034,18 +1034,18 @@ namespace Sameer.Shared.Data
 
                 int result = await this.SaveChangesAsync(checkConcurrency: false, mergeValues: false, validateBeforeSave: false);
 
-                var results = new List<RepositoryActionResult<TEntity>>();
+                var results = new List<DataActionResult<TEntity>>();
 
 
                 foreach (var item in itemsToDelete)
                 {
                     if (result > 0)
                     {
-                        results.Add(new RepositoryActionResult<TEntity>(item, RepositoryActionStatus.Deleted));
+                        results.Add(new DataActionResult<TEntity>(item, RepositoryActionStatus.Deleted));
                     }
                     else
                     {
-                        results.Add(new RepositoryActionResult<TEntity>(item, RepositoryActionStatus.NothingModified));
+                        results.Add(new DataActionResult<TEntity>(item, RepositoryActionStatus.NothingModified));
                     }
                 }
 
@@ -1064,7 +1064,7 @@ namespace Sameer.Shared.Data
                 throw;
             }
         }
-        public IEnumerable<RepositoryActionResult<TEntity>> DeleteAll<TEntity>(Expression<Func<TEntity, bool>> existingItemsPredicate)
+        public IEnumerable<DataActionResult<TEntity>> DeleteAll<TEntity>(Expression<Func<TEntity, bool>> existingItemsPredicate)
             where TEntity : class, new()
         {
             try
@@ -1073,7 +1073,7 @@ namespace Sameer.Shared.Data
 
                 if (itemsToDelete == null || itemsToDelete.Count() < 1)
                 {
-                    return new List<RepositoryActionResult<TEntity>> { new RepositoryActionResult<TEntity>(entity: null, status: RepositoryActionStatus.NotFound) };
+                    return new List<DataActionResult<TEntity>> { new DataActionResult<TEntity>(entity: null, status: RepositoryActionStatus.NotFound) };
                 }
 
                 foreach (var item in itemsToDelete)
@@ -1083,18 +1083,18 @@ namespace Sameer.Shared.Data
 
                 int result = this.SaveChanges(checkConcurrency: false, mergeValues: false, validateBeforeSave: false);
 
-                var results = new List<RepositoryActionResult<TEntity>>();
+                var results = new List<DataActionResult<TEntity>>();
 
 
                 foreach (var item in itemsToDelete)
                 {
                     if (result > 0)
                     {
-                        results.Add(new RepositoryActionResult<TEntity>(item, RepositoryActionStatus.Deleted));
+                        results.Add(new DataActionResult<TEntity>(item, RepositoryActionStatus.Deleted));
                     }
                     else
                     {
-                        results.Add(new RepositoryActionResult<TEntity>(item, RepositoryActionStatus.NothingModified));
+                        results.Add(new DataActionResult<TEntity>(item, RepositoryActionStatus.NothingModified));
                     }
                 }
 
@@ -1114,7 +1114,7 @@ namespace Sameer.Shared.Data
             }
         }
 
-        public async Task<IEnumerable<RepositoryActionResult<TEntity>>> DeleteAllAsync<TEntity>(Expression<Func<TEntity, bool>> existingItemsPredicate)
+        public async Task<IEnumerable<DataActionResult<TEntity>>> DeleteAllAsync<TEntity>(Expression<Func<TEntity, bool>> existingItemsPredicate)
            where TEntity : class, new()
         {
             try
@@ -1123,7 +1123,7 @@ namespace Sameer.Shared.Data
 
                 if (itemsToDelete == null || itemsToDelete.Count() < 1)
                 {
-                    return new List<RepositoryActionResult<TEntity>> { new RepositoryActionResult<TEntity>(entity: null, status: RepositoryActionStatus.NotFound) };
+                    return new List<DataActionResult<TEntity>> { new DataActionResult<TEntity>(entity: null, status: RepositoryActionStatus.NotFound) };
                 }
 
                 foreach (var item in itemsToDelete)
@@ -1133,18 +1133,18 @@ namespace Sameer.Shared.Data
 
                 int result = await this.SaveChangesAsync(checkConcurrency: false, mergeValues: false, validateBeforeSave: false);
 
-                var results = new List<RepositoryActionResult<TEntity>>();
+                var results = new List<DataActionResult<TEntity>>();
 
 
                 foreach (var item in itemsToDelete)
                 {
                     if (result > 0)
                     {
-                        results.Add(new RepositoryActionResult<TEntity>(item, RepositoryActionStatus.Deleted));
+                        results.Add(new DataActionResult<TEntity>(item, RepositoryActionStatus.Deleted));
                     }
                     else
                     {
-                        results.Add(new RepositoryActionResult<TEntity>(item, RepositoryActionStatus.NothingModified));
+                        results.Add(new DataActionResult<TEntity>(item, RepositoryActionStatus.NothingModified));
                     }
                 }
 
