@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Sameer.Shared.Data
 {
-    public class GeneralManager<T> : IDisposable where T : class, ISameerObject, new()
+    public class GeneralManager<T> : IDataManager<T> where T : class, ISameerObject, new()
     {
         protected IRepository repository;
 
@@ -866,6 +866,79 @@ namespace Sameer.Shared.Data
         public void Dispose()
         {
             this.repository.Dispose();
+        }
+
+        public async Task<List<T>> GetAllDataList()
+        {
+            try
+            {
+                return await this.GetAllAsNoTrackingListAsync();
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public async Task<T> GetDataById(int id)
+        {
+            try
+            {
+                return await this.GetByIdAsync(id);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public async Task<DataActionResult<T>> InsertNewDataItem(T newItem)
+        {
+            try
+            {
+                return await this.InsertNewAsync(newItem);
+            }
+            catch (ValidationException)
+            {
+                throw;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public async Task<DataActionResult<T>> UpdateDataItem(T currentItem)
+        {
+            try
+            {
+                return await this.UpdateItemAsync(currentItem);
+            }
+            catch (ValidationException)
+            {
+                throw;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+       public async Task<DataActionResult<T>> DeleteDataItem(int itemId)
+        {
+            try
+            {
+                return await this.DeleteItemAsync(itemId);
+            }
+            catch (ValidationException)
+            {
+                throw;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
     }
 }

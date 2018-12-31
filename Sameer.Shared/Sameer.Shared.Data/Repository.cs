@@ -1015,7 +1015,6 @@ namespace Sameer.Shared.Data
             }
         }
 
-
         public async Task<IEnumerable<DataActionResult<TEntity>>> DeleteAllAsync<TEntity>(int[] itemsIds) where TEntity : class, ISameerObject, new()
         {
             try
