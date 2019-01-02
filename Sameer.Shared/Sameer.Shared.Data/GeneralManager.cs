@@ -940,5 +940,35 @@ namespace Sameer.Shared.Data
                 throw;
             }
         }
+
+        public async Task<PagedDataResult<T>> GetPagedDataList(int pageNumber = 1, int pageSize = 100, string sort = "Id")
+        {
+            try
+            {
+                pageNumber = pageNumber >= 1 ? pageNumber : 1;
+                pageSize = pageSize >= 5 ? pageSize : 5;
+                var dataQuery = this.GetAll();
+
+                var result = new PagedDataResult<T>
+                {
+                    PageNumber = pageNumber,
+                    PageSize = pageSize,
+                    DataCount = dataQuery.Count()
+                };
+
+                result.PagesCount = (int)Math.Ceiling((double)result.DataCount / pageSize);
+
+               
+                result.DataList = await this.GetAll()
+                    .ApplySort<T>(sort)
+                    .Skip((pageNumber - 1) * pageSize).Take(pageSize).AsNoTracking().ToListAsync();
+
+                return result;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
     }
 }
