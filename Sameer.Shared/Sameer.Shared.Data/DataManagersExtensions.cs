@@ -21,9 +21,9 @@ namespace Sameer.Shared.Data
             services.AddScoped(typeof(IDataManager<>), typeof(GeneralManager<>));
             services.AddScoped(typeof(GeneralManager<>));
 
-            var assembliesCollection = new List<Assembly>() { Assembly.GetExecutingAssembly()};
+            var assembliesCollection = new List<Assembly>() { Assembly.GetCallingAssembly()};
 
-            foreach (var item in Assembly.GetExecutingAssembly().GetReferencedAssemblies())
+            foreach (var item in Assembly.GetCallingAssembly().GetReferencedAssemblies())
             {
                 assembliesCollection.Add(Assembly.Load(item));
             }
