@@ -186,6 +186,15 @@ namespace Sameer.Shared
                 date.ToString("MMMM", culture));
         }
 
+        public static int CalcDuration(this DateTime startDate, DateTime endDate)
+        {
+            if (endDate.Date < startDate.Date)
+            {
+                throw new Exception("Error: endDate can't be less than startDate");
+            }
+            return endDate.Date.Subtract(startDate.Date).Days + 1;
+        }
+
 
     }
 }

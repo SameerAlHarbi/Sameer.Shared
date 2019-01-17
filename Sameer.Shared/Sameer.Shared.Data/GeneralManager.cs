@@ -909,6 +909,22 @@ namespace Sameer.Shared.Data
             }
         }
 
+        public async Task<IEnumerable<DataActionResult<T>>> InsertNewDataItems(IEnumerable<T> newItems)
+        {
+            try
+            {
+                return await repository.InsertManyAsync(newItems,true,false,true);
+            }
+            catch (ValidationException)
+            {
+                throw;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
         public async Task<DataActionResult<T>> UpdateDataItem(T currentItem)
         {
             try
@@ -925,7 +941,42 @@ namespace Sameer.Shared.Data
             }
         }
 
-       public async Task<DataActionResult<T>> DeleteDataItem(int itemId)
+        public async Task<IEnumerable<DataActionResult<T>>> UpdateDataItems(IEnumerable<T> currentItems)
+        {
+            try
+            {
+                var itemsValidationResults = new List<ValidationResult>();
+
+                T firstItem = null;
+                foreach (var currentItem in currentItems)
+                {
+                   var itemValidationResult = await ValidateUpdateItemAsync(currentItem);
+                    if (itemValidationResult.Any())
+                    {
+                        firstItem = firstItem ?? currentItem;
+                        itemsValidationResults.AddRange(itemValidationResult);
+                    }
+                }
+
+                if (itemsValidationResults.Any())
+                {
+                    throw new ValidationException(itemsValidationResults.First(), validatingAttribute: null, value: firstItem);
+                }
+
+                return await repository.UpdateManyAsync(currentItems, true, false, true);
+
+            }
+            catch (ValidationException)
+            {
+                throw;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public async Task<DataActionResult<T>> DeleteDataItem(int itemId)
         {
             try
             {
@@ -970,5 +1021,7 @@ namespace Sameer.Shared.Data
                 throw;
             }
         }
+
+        
     }
 }

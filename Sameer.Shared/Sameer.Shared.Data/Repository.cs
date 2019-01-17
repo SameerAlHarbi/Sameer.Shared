@@ -492,6 +492,39 @@ namespace Sameer.Shared.Data
             }
         }
 
+        private DataActionResult<TEntity> updateItemWithoutSave<TEntity>(TEntity newItem, TEntity itemToUpdate)
+            where TEntity : class, new()
+        {
+            try
+            {
+                // change the original entity status to detached; otherwise, we get an error on attach
+                // as the entity is already in the dbSet
+
+                // set original entity state to detached
+                context.Entry(itemToUpdate).State = EntityState.Detached;
+
+                // attach & save
+                context.Set<TEntity>().Attach(newItem);
+
+                // set the updated entity state to modified, so it gets updated.
+                context.Entry(newItem).State = EntityState.Modified;
+
+                return new DataActionResult<TEntity>(newItem, RepositoryActionStatus.NothingModified, exception: null);
+            }
+            catch (ValidationException)
+            {
+                throw;
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                throw;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
         public DataActionResult<TEntity> Update<TEntity>
             (TEntity newItem, bool checkConcurrency, bool mergeValues, bool validateBeforeSave)
             where TEntity : class, ISameerObject, new()
@@ -616,49 +649,55 @@ namespace Sameer.Shared.Data
             }
         }
 
-        //public RepositoryActionResult<TEntity> UpdateMany<TEntity>
-        //    (IEnumerable<TEntity> newItems, Expression<Func<TEntity, bool>> existingItemsPredicate, bool checkConcurrency, bool mergeValues, bool validateBeforeSave)
-        //    where TEntity : class, ISameerObject, new()
-        //{
-        //    try
-        //    {
-        //        // you can only update when an data already exists for this id
-        //        //xxxxxxxxxx
-        //        List<int> ids = newItems?.Select(d => d.Id).ToList() ?? new List<int>();
+        public async Task<IEnumerable<DataActionResult<TEntity>>> UpdateManyAsync<TEntity>
+            (IEnumerable<TEntity> newItems, bool checkConcurrency, bool mergeValues, bool validateBeforeSave)
+            where TEntity : class, ISameerObject, new()
+        {
+            try
+            {
 
-        //        List<TEntity> itemsToUpdate = this.GetAll<TEntity>(t => ids.Contains(t.Id)).ToList();
+                // you can only update when an data already exists for this id
+                List<int> ids = newItems?.Select(d => d.Id).ToList() ?? new List<int>();
+                List<TEntity> itemsToUpdate = this.GetAll<TEntity>(t => ids.Contains(t.Id)).ToList();
 
-        //        if (itemsToUpdate.Count < newItems.Count())
-        //        {
+                var result = new List<DataActionResult<TEntity>>();
+                foreach (var itemToUpdate in itemsToUpdate)
+                {
+                    var newItem = newItems.FirstOrDefault(i => i.Id == itemToUpdate.Id);
+                    updateItemWithoutSave(newItem, itemToUpdate);
+                }
 
-        //        }
+                int saveResult = await this.SaveChangesAsync(checkConcurrency, mergeValues, validateBeforeSave);
+                if (saveResult > 0)
+                {
+                    foreach (var item in newItems)
+                    {
+                        result.Add(new DataActionResult<TEntity>(item, RepositoryActionStatus.Updated));
+                    }
+                }
+                else
+                {
+                    foreach (var item in newItems)
+                    {
+                        result.Add(new DataActionResult<TEntity>(item, RepositoryActionStatus.NothingModified, exception: null));
+                    }
+                }
 
-        //        foreach (var item in newItems)
-        //        {
-        //            TEntity itemToUpdate = itemsToUpdate.FirstOrDefault()
-        //        }
-
-
-        //        if (itemToUpdate == null)
-        //        {
-        //            return new RepositoryActionResult<TEntity>(newItem, RepositoryActionStatus.NotFound);
-        //        }
-
-        //        return updateItem(newItem, itemToUpdate, checkConcurrency, mergeValues, validateBeforeSave);
-        //    }
-        //    catch (ValidationException)
-        //    {
-        //        throw;
-        //    }
-        //    catch (DbUpdateConcurrencyException)
-        //    {
-        //        throw;
-        //    }
-        //    catch (Exception)
-        //    {
-        //        throw;
-        //    }
-        //}
+                return result;
+            }
+            catch (ValidationException)
+            {
+                throw;
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                throw;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
 
         private DataActionResult<TEntity> deleteItem<TEntity>(TEntity itemToDelete) where TEntity : class, new()
         {

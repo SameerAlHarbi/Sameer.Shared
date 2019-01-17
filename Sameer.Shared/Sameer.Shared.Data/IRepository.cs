@@ -70,7 +70,11 @@ namespace Sameer.Shared.Data
             (TEntity newItem, Expression<Func<TEntity, bool>> existingItemPredicate, bool checkConcurrency, bool mergeValues, bool validateBeforeSave)
             where TEntity : class, new();
 
-        DataActionResult<TEntity> Delete<TEntity>(int itemId) where TEntity : class, ISameerObject, new();
+        Task<IEnumerable<DataActionResult<TEntity>>> UpdateManyAsync<TEntity>
+           (IEnumerable<TEntity> newItems, bool checkConcurrency, bool mergeValues, bool validateBeforeSave)
+           where TEntity : class, ISameerObject, new();
+
+       DataActionResult<TEntity> Delete<TEntity>(int itemId) where TEntity : class, ISameerObject, new();
 
         Task<DataActionResult<TEntity>> DeleteAsync<TEntity>(int itemId) where TEntity : class, ISameerObject, new();
 

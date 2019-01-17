@@ -14,7 +14,11 @@ namespace Sameer.Shared
 
         Task<DataActionResult<T>> InsertNewDataItem(T newItem);
 
+        Task<IEnumerable<DataActionResult<T>>> InsertNewDataItems(IEnumerable<T> newItems);
+
         Task<DataActionResult<T>> UpdateDataItem(T currentItem);
+
+        Task<IEnumerable<DataActionResult<T>>> UpdateDataItems(IEnumerable<T> currentItems);
 
         Task<DataActionResult<T>> DeleteDataItem(int itemId);
 
