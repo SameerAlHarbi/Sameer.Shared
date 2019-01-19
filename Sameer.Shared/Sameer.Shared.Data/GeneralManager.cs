@@ -1022,6 +1022,26 @@ namespace Sameer.Shared.Data
             }
         }
 
-        
+        public async Task<List<T>> GetAllDataList(string fieldName, string fieldValue)
+        {
+            try
+            {
+                var parameter = Expression.Parameter(typeof(T), "x");
+                var member = Expression.Property(parameter, fieldName);
+                //var left = Expression.Call(member, typeof(string).GetMethod("Trim", Type.EmptyTypes));
+                //var left2 = Expression.Call(left, typeof(string).GetMethod("ToLower", Type.EmptyTypes));
+                var constant = Expression.Constant(fieldValue);
+                //var right = Expression.Call(constant, typeof(string).GetMethod("Trim", Type.EmptyTypes));
+                //var right2 = Expression.Call(right, typeof(string).GetMethod("ToLower", Type.EmptyTypes));
+                var body = Expression.Equal(member, constant);
+                var finalExpression = Expression.Lambda<Func<T, bool>>(body, parameter);
+
+                return await GetAllAsNoTrackingListAsync(finalExpression);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
     }
 }

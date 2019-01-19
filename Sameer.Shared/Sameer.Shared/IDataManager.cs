@@ -8,6 +8,8 @@ namespace Sameer.Shared
     {
         Task<List<T>> GetAllDataList();
 
+        Task<List<T>> GetAllDataList(string fieldName, string fieldValue);
+
         Task<PagedDataResult<T>> GetPagedDataList(int pageNumber=1,int pageSize=100, string sort = "Id");
 
         Task<T> GetDataById(int id);
