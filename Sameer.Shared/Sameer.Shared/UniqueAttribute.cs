@@ -29,6 +29,8 @@ namespace Sameer.Shared
 
         public List<string> ParentsPropertiesNames { get; set; }
 
+        public object UniqueValue { get; set; }
+
         public UniqueAttribute(params string[] parentsNames)
         {
             ErrorMessage = string.Empty;

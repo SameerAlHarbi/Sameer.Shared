@@ -282,7 +282,7 @@ namespace Sameer.Shared.Data
             return await CustomDeleteRulesValidateAsync(itemToDelete);
         }
 
-        protected ICollection<ValidationResult> ValidateUniqueItem(T newItem)
+        protected virtual ICollection<ValidationResult> ValidateUniqueItem(T newItem)
         {
             var vResults = new List<ValidationResult>();
 
@@ -335,6 +335,13 @@ namespace Sameer.Shared.Data
 
                         BinaryExpression resultExpression2 = Expression.Equal(left, right);
                         resultExpression = Expression.AndAlso(resultExpression, resultExpression2);
+                    }
+
+                    if (unqAttr.UniqueValue != null)
+                    {
+                        left = Expression.MakeMemberAccess(e, prp.property);
+                        right = Expression.Constant(unqAttr.UniqueValue, propertyValue.GetType());
+                        resultExpression = Expression.AndAlso(resultExpression, Expression.Equal(left, right));
                     }
 
                     expressionsList.Add(resultExpression);
@@ -399,7 +406,7 @@ namespace Sameer.Shared.Data
             return vResults;
         }
 
-        protected async Task<ICollection<ValidationResult>> ValidateUniqueItemAsync(T newItem)
+        protected virtual async Task<ICollection<ValidationResult>> ValidateUniqueItemAsync(T newItem)
         {
             var vResults = new List<ValidationResult>();
 
@@ -452,6 +459,13 @@ namespace Sameer.Shared.Data
 
                         BinaryExpression resultExpression2 = Expression.Equal(left, right);
                         resultExpression = Expression.AndAlso(resultExpression, resultExpression2);
+                    }
+
+                    if (unqAttr.UniqueValue != null)
+                    {
+                        left = Expression.MakeMemberAccess(e, prp.property);
+                        right = Expression.Constant(unqAttr.UniqueValue, propertyValue.GetType());
+                        resultExpression = Expression.AndAlso(resultExpression, Expression.Equal(left, right));
                     }
 
                     expressionsList.Add(resultExpression);
