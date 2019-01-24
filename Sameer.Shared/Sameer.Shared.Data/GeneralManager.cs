@@ -1036,7 +1036,7 @@ namespace Sameer.Shared.Data
             }
         }
 
-        public async Task<List<T>> GetAllDataList(string fieldName, string fieldValue)
+        public async Task<List<T>> GetAllDataList(string fieldName, object fieldValue)
         {
             try
             {
