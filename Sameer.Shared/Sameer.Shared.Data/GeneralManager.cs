@@ -877,6 +877,26 @@ namespace Sameer.Shared.Data
             }
         }
 
+        public virtual async Task<IEnumerable<DataActionResult<T>>> DirectDeleteItems(Expression<Func<T, bool>> existingItemsPredicate)
+        {
+            try
+            {
+                return await repository.DeleteAllAsync(existingItemsPredicate);
+            }
+            catch (ValidationException)
+            {
+                throw;
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                throw;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
         public void Dispose()
         {
             this.repository.Dispose();

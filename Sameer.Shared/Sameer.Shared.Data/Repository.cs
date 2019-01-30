@@ -658,7 +658,7 @@ namespace Sameer.Shared.Data
 
                 // you can only update when an data already exists for this id
                 List<int> ids = newItems?.Select(d => d.Id).ToList() ?? new List<int>();
-                List<TEntity> itemsToUpdate = this.GetAll<TEntity>(t => ids.Contains(t.Id)).ToList();
+                List<TEntity> itemsToUpdate = await this.GetAll<TEntity>(t => ids.Contains(t.Id)).ToListAsync();
 
                 var result = new List<DataActionResult<TEntity>>();
                 foreach (var itemToUpdate in itemsToUpdate)
