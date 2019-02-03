@@ -51,20 +51,35 @@ namespace Sameer.Shared
         public static TimeSpan ConvertToTime(this double value)
         {
             var hourLimit = (int)value;
-            var minutesLimit = (int)(60 * (value - hourLimit));
+            var minutes = 60 * (value - hourLimit);
+            var minutesLimit = (int)minutes;
+            var seconds = minutes - minutesLimit;
+            var secondsLong = 60 * seconds;
+            var secondsLimit = (int)Math.Round(secondsLong);
+            if(secondsLimit >= 60)
+            {
+                secondsLimit = 0;
+                minutesLimit++;
+                if(minutesLimit >= 60)
+                {
+                    minutesLimit = 0;
+                    hourLimit++;
+                }
+            }
 
-            var result = new TimeSpan(hourLimit, minutesLimit, 0);
-            return result;
+            return new TimeSpan(hourLimit, minutesLimit, secondsLimit);
         }
 
         public static double ConvertToDouble(this TimeSpan timeToConvert)
         {
             int hours = timeToConvert.Hours;
             int minutes = timeToConvert.Minutes;
+            int seconds = timeToConvert.Seconds;
 
-            double result = minutes / (double)60;
-            result += hours;
-            return result;
+            double minutesResult = minutes / 60d;
+            double secondsResult = seconds / 3600d;
+
+            return hours + minutesResult + secondsResult;
         }
 
 
