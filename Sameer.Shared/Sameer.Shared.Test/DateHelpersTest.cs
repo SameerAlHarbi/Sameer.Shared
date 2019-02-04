@@ -61,5 +61,29 @@ namespace Sameer.Shared.Test
 
             Assert.IsTrue(result == "October");
         }
+
+        [TestMethod]
+        public void TestConvertToDouble_Success()
+        {
+            TimeSpan tm = new TimeSpan(2, 15, 34);
+            double results = tm.ConvertToDouble();
+            Assert.IsTrue(results  == 2.2594444444444446d);
+        }
+
+        [TestMethod]
+        public void TestConvertToTime_Success()
+        {
+            double tmDouble =  2.2594444444444446d;
+            TimeSpan results = tmDouble.ConvertToTime();
+            Assert.IsTrue(results.Hours == 2 && results.Minutes == 15 && results.Seconds == 34 );
+        }
+
+        [TestMethod]
+        public void TestConvertToTime2_Success()
+        {
+            double tmDouble = 18.766666666666666d;
+            TimeSpan results = tmDouble.ConvertToTime();
+            Assert.IsTrue(results.Hours == 2 && results.Minutes == 15 && results.Seconds == 34 );
+        }
     }
 }
