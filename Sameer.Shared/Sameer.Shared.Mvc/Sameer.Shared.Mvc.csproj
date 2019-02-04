@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <Description>Shared dlls form common asp.net core mvc tasks</Description>
+    <Authors>Sameer Al Harbi</Authors>
+    <Company>Saudi Geological Survey</Company>
+    <Copyright>Sameer Al Harbi 2019</Copyright>
+    <PackageProjectUrl>https://github.com/SameerAlHarbi/Sameer.Shared</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/SameerAlHarbi/Sameer.Shared.git</RepositoryUrl>
+    <RepositoryType>Git</RepositoryType>
+    <PackageTags>.net statndard,Data,entityframework,core,middleware</PackageTags>
+    <NeutralLanguage>en-US</NeutralLanguage>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.StaticFiles" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Extensions.FileProviders.Physical" Version="2.2.0" />
+  </ItemGroup>
+
+</Project>

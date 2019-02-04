@@ -2,7 +2,7 @@
 using Microsoft.Extensions.FileProviders;
 using System.IO;
 
-namespace Sameer.Shared.Mvc
+namespace Sameer.Shared.Helpers.Mvc
 {
     public static class ApplicationBuilderExtensions
     {
