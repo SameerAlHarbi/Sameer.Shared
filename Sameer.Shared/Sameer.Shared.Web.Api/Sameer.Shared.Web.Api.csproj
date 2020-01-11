@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Authors>Sameer Al Harbi</Authors>
+    <Company>Saudi Geological Survey</Company>
+    <Description>Contains shared dll's and managers for asp.net api programming and data operations.</Description>
+    <Copyright>Sameer Al Harbi 2019</Copyright>
+    <PackageProjectUrl>https://github.com/SameerAlHarbi/Sameer.Shared</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/SameerAlHarbi/Sameer.Shared.git</RepositoryUrl>
+    <RepositoryType>Git</RepositoryType>
+    <PackageTags>.net statndard,Data,entityframework,core,reopsitory,asp,api</PackageTags>
+    <Version>1.0.2</Version>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="7.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.2.0" />
+    <PackageReference Include="Sameer.Shared" Version="3.1.0.3" />
+    <PackageReference Include="Sameer.Shared.Data" Version="3.1.0" />
+  </ItemGroup>
+
+</Project>

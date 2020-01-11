@@ -6,19 +6,20 @@
     <Company>Saudi Geological Survey</Company>
     <Description>Contains shared dll's and managers for comman .net programming and operations.</Description>
     <PackageTags>.net statndard,date,hijri,hijry,helper,helpers,calculations</PackageTags>
-    <Copyright>Sameer Al Harbi 2018</Copyright>
+    <Copyright>Sameer Al Harbi 2019</Copyright>
     <PackageProjectUrl>https://github.com/SameerAlHarbi/Sameer.Shared</PackageProjectUrl>
     <RepositoryUrl>https://github.com/SameerAlHarbi/Sameer.Shared.git</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
     <NeutralLanguage>en-US</NeutralLanguage>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>2.1.1</Version>
-    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <Version>3.1.0.3</Version>
+    <AssemblyVersion>3.1.0.3</AssemblyVersion>
+    <FileVersion>3.1.0.3</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="System.ComponentModel.Annotations" Version="4.5.0" />
-    <PackageReference Include="System.Linq.Dynamic.Core" Version="1.0.9.2" />
+    <PackageReference Include="System.ComponentModel.Annotations" Version="4.7.0" />
+    <PackageReference Include="System.Linq.Dynamic.Core" Version="1.0.19" />
   </ItemGroup>
 
 </Project>

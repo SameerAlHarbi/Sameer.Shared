@@ -195,6 +195,24 @@ namespace Sameer.Shared
             return endDate.Date.Subtract(startDate.Date).Days + 1;
         }
 
+        public static bool IsBetween(this DateTime date
+            , DateTime startDate
+            , DateTime endDate
+            , bool compareTime = true)
+        {
+            return compareTime ? date >= startDate && date <= endDate 
+                               : date.Date >= startDate.Date && date.Date <= endDate.Date;
+        }
+
+        public static bool IsConflictRange(this DateTime startDate, DateTime endDate,
+            DateTime newStartDate, DateTime newEndDate, bool compareTime = true)
+        {
+
+           return startDate.IsBetween(newStartDate, newEndDate, compareTime) 
+                || newStartDate.IsBetween(startDate, endDate,compareTime);
+
+        }
+
 
     }
 }
